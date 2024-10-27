@@ -137,7 +137,7 @@ openai_api_key=YOUR_OPENAI_API_KEY
 이 프로젝트는 `uvicorn`을 사용하여 실행됩니다. 다음 명령어로 서버를 실행할 수 있습니다.
 
 ```bash
-uvicorn ai.Utils.main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn ai.Utils.main:app -reload
 ```
 
 ## 로그 및 디버깅
