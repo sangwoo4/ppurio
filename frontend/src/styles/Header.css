@@ -1,12 +1,18 @@
 .header {
+  /* position: fixed; */
+  /* 화면 상단에 고정 - 활성화하면 다른 화면이 안보임*/
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  /* 다른 요소보다 위에 위치 */
   display: flex;
   justify-content: space-between;
-  /* 왼쪽과 오른쪽 정렬 */
   align-items: center;
-  /* 수직 중앙 정렬 */
   padding: 10px 50px;
   background-color: #8fc7ff;
   color: white;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .logo-container {
