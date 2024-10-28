@@ -4,7 +4,11 @@ import logging
 from typing import List
 from fastapi import HTTPException
 from openai import AsyncOpenAI
-from ai.Utils.schemas import TextRequest, TextResponse
+from dotenv import load_dotenv
+from ai.Utils.schemas import TextRequest
+
+# .env 파일 로드
+load_dotenv()
 
 # OpenAI API Key 설정
 openai_api_key = os.getenv("openai_api_key")
