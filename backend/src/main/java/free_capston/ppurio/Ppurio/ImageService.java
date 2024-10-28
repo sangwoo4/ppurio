@@ -27,7 +27,7 @@ public class ImageService {
         this.imageRepository = imageRepository;
     }
 
-    public List<String> saveImages(SendMessageDto sendMessageDto) {
+    public List<String> changeUrlAndUploadImages(SendMessageDto sendMessageDto) {
         List<String> uploadedUrls = new ArrayList<>();
         if (sendMessageDto.getFiles() != null && !sendMessageDto.getFiles().isEmpty()) {
             for (FileDto fileDto : sendMessageDto.getFiles()) {

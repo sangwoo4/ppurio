@@ -1,6 +1,7 @@
 package free_capston.ppurio.Account;
 
 import free_capston.ppurio.Dto.LoginDto;
+import free_capston.ppurio.Dto.LoginResponseDto;
 import free_capston.ppurio.Dto.ResponseDto;
 import free_capston.ppurio.Dto.SignUpDto;
 import free_capston.ppurio.Repository.UserRepository;
@@ -23,14 +24,20 @@ public class AccountService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseDto<?> login(LoginDto loginDto){
+    public ResponseDto<?> login(LoginDto loginDto) {
         Optional<User> user = userRepository.findByEmail(loginDto.getEmail());
         if (!user.isPresent()) {
             return ResponseDto.setFailed("해당 이메일의 사용자가 존재하지 않습니다.");
         }
         Boolean loginResult = matchingPassword(user.get().getPassword(), loginDto.getPassword());
-        if(loginResult) return ResponseDto.setSuccess("로그인 성공");
-        else return ResponseDto.setFailed("로그인 실패");
+        Long userId = user.get().getUserId();
+
+        if (loginResult) {
+            LoginResponseDto userIdDto = new LoginResponseDto(userId);
+            return ResponseDto.setSuccessData("로그인 성공", userIdDto);
+        } else {
+            return ResponseDto.setFailed("로그인 실패");
+        }
     }
 
     public Boolean matchingPassword(String userPassword, String loginPassword){
