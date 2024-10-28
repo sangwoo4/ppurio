@@ -1,5 +1,6 @@
 package free_capston.ppurio.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +24,8 @@ public class Image {
     @Column(nullable = false)
     private String url;
 
-    // Message와의 관계 설정 (1:N)
-    @OneToMany(mappedBy = "image", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @ManyToMany(mappedBy = "images", cascade = CascadeType.REMOVE)
     private Set<Message> messages = new HashSet<>();
+
 }
