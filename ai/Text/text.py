@@ -26,8 +26,8 @@ async def categorize(request: TextRequest) -> dict:
 
         # Chat 형식 메시지 작성
         messages = [
-            {"role": "system", "content": "You are a helpful assistant for create text messages"},
-            {"role": "user", "content": f"제목: {request.input}\n 해시태그 {request.hashtag}적절한 문자 메세지 형식을 제안해 주세요."}
+            {"role": "system", "content": "You are a helpful assistant for creating text messages that must include the provided hashtags."},
+            {"role": "user", "content": f"내용: {request.input}\n해시태그: {', '.join(request.hashtag)}\n이 해시태그를 반드시 포함하여 적절한 문자 메세지 형식을 제안해 주세요."} 
         ]
 
         # OpenAI Chat API 요청
