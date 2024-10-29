@@ -29,7 +29,6 @@ public class Message {
             joinColumns = @JoinColumn(name ="message_id"),
             inverseJoinColumns = @JoinColumn(name = "image_id")
     )
-    @Builder.Default
     private Set<Image> images = new HashSet<>();
 
     @Column(columnDefinition = "TEXT")

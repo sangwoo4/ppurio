@@ -30,35 +30,11 @@ public class RequestService {
 
     public void requestSend(SendMessageDto sendMessageDto){
         String basicAuthorization = Base64.getEncoder().encodeToString((PPURIO_ACCOUNT + ":" + API_KEY).getBytes());
-
         Map<String, Object> tokenResponse = getToken(URI, basicAuthorization);
-        System.out.println("tokenResponse" + tokenResponse);
-        Map<String, Object> sendResponse = send(URI, (String) tokenResponse.get("token"), sendMessageDto);
-        System.out.println("sendResponse" + sendResponse);
+//        Map<String, Object> sendResponse = send(URI, (String) tokenResponse.get("token"), sendMessageDto);
         send(URI, (String) tokenResponse.get("token"), sendMessageDto);
     }
 
-
-
-    //메시지를 보내는 부분
-//    private Map<String, Object> send(String baseUri, String accessToken, SendMessageDto sendMessageDto) {
-//        HttpURLConnection conn = null;
-//        try {
-//            String bearerAuthorization = String.format("%s %s", "Bearer", accessToken);
-//            Request request = new Request(baseUri + "/v1/message", bearerAuthorization);
-//
-//            // createSendTestParams를 호출하여 필요한 파라미터를 생성
-//            Map<String, Object> params = createSendTestParams(sendMessageDto);
-//            System.out.println("parmas == " + params);
-//            // DTO를 JSON으로 변환하여 HTTP 요청 생성
-//            conn = createConnection(request,  params);
-//            System.out.println("conn == " +conn);
-//
-//            return getResponseBody(conn);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 
     private Map<String, Object> send(String baseUri, String accessToken, SendMessageDto sendMessageDto) {
         HttpURLConnection conn = null;
@@ -87,39 +63,6 @@ public class RequestService {
         }
     }
 
-    //local 이미지 전송
-//    private Map<String, Object> createFileTestParams(String filePath) throws RuntimeException, IOException {
-//        FileInputStream fileInputStream = null;
-//        try {
-//            File file = new File(filePath);
-//            byte[] fileBytes = new byte[ (int) file.length()];
-//            fileInputStream = new FileInputStream(file);
-//            int readBytes = fileInputStream.read(fileBytes);
-//
-//            if (readBytes != file.length()) {
-//                throw new IOException();
-//            }
-//
-//            String encodedFileData = Base64.getEncoder().encodeToString(fileBytes);
-//            System.out.println(encodedFileData);
-//            HashMap<String, Object> params = new HashMap<>();
-//            params.put("size", file.length());
-//            params.put("name", file.getName());
-//            params.put("data", encodedFileData);
-//            return params;
-//        } catch (IOException e) {
-//            throw new RuntimeException("파일을 가져오는데 실패했습니다.", e);
-//        } finally {
-//            if(fileInputStream != null) {
-//                fileInputStream.close();
-//            }
-//        }
-//    }
-
-
-
-
-
     private Map<String, Object> getToken(String baseUri, String BasicAuthorization) {
         HttpURLConnection conn = null;
         try {
@@ -139,26 +82,6 @@ public class RequestService {
             }
         }
     }
-// ㅣocal로 전송
-//    private Map<String, Object> createSendTestParams(SendMessageDto sendMessageDto) throws IOException {
-//        HashMap<String, Object> params = new HashMap<>();
-//        params.put("account", sendMessageDto.getAccount());
-//        params.put("messageType", sendMessageDto.getMessageType());
-//        params.put("from", FROM);
-//        params.put("content", sendMessageDto.getContent());
-//        System.out.println("message" + sendMessageDto.getTargetCount());
-//        params.put("duplicateFlag", sendMessageDto.getDuplicateFlag());
-////        params.put("rejectType", sendMessageDto.getRejectType());
-//        params.put("targetCount", sendMessageDto.getTargetCount());
-//        params.put("targets", sendMessageDto.getTargets());
-//
-//        params.put("files", List.of(
-//                createFileTestParams(FILE_PATH)
-//        ));
-//
-//        params.put("refKey", sendMessageDto.getRefKey());
-//        return params;
-//    }
 
     private Map<String, Object> createSendTestParams(SendMessageDto sendMessageDto) throws IOException {
         HashMap<String, Object> params = new HashMap<>();
@@ -173,7 +96,6 @@ public class RequestService {
         params.put("targetCount", sendMessageDto.getTargetCount());
         params.put("targets", sendMessageDto.getTargets());
         params.put("refKey", sendMessageDto.getRefKey());
-//        params.put("userId", sendMessageDto.getUserId());
 
         if (sendMessageDto.getFiles() != null) {
             List<Map<String, Object>> fileParamsList = sendMessageDto.getFiles().stream()
@@ -190,21 +112,7 @@ public class RequestService {
 
         return params;
     }
-//    private Map<String, Object> createFileTestParams(FileDto fileDto) throws IOException {
-//        String fileUrl = fileDto.getFileUrl();
-//        try (InputStream inputStream = new URL(fileUrl).openStream()) {
-//            byte[] fileBytes = inputStream.readAllBytes();
-//            String encodedFileData = Base64.getEncoder().encodeToString(fileBytes);
-//
-//            HashMap<String, Object> params = new HashMap<>();
-//            params.put("size", fileBytes.length);
-//            params.put("name", Paths.get(new URL(fileUrl).getPath()).getFileName().toString());
-//            params.put("data", encodedFileData);
-//            return params;
-//        } catch (IOException e) {
-//            throw new RuntimeException("파일을 가져오는데 실패했습니다: " + fileUrl, e);
-//        }
-//    }
+
 private Map<String, Object> createFileTestParams(FileDto fileDto) throws IOException {
     String fileUrl = fileDto.getFileUrl();
     try (InputStream inputStream = new URL(fileUrl).openStream()) {
