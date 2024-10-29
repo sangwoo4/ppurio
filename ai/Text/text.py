@@ -24,7 +24,7 @@ def logger_setup():
 
 logger = logger_setup()
 
-async def categorize(request: TextRequest) -> dict:
+async def generate_text(request: TextRequest) -> dict:
     try:
         logger.info(f"요청받음 - 입력: {request.input}\n해시태그: {request.hashtag}")
 

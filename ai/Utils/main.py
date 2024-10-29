@@ -1,15 +1,15 @@
 # uvicorn.py (ai/Utils)
 import ai.Utils.main as main
 from fastapi import FastAPI
-from ai.Text.text import categorize, TextRequest, TextResponse
+from ai.Text.text import generate_text, TextRequest, TextResponse
 from ai.Image.image import generate_image, ImageCreateRequest, ImageCreateResponse
 from ai.Image.image import modify_image, ImageEditResponse, ImageEditRequest
 
 app = FastAPI()
 
 @app.post("/text")
-async def handle_text(request: TextRequest):
-    response = await categorize(request)  # categorize 함수 호출 시 await 필요
+async def generate_text_endpoint(request: TextRequest):
+    response = await generate_text(request)  # categorize 함수 호출 시 await 필요
     return response
 
 @app.post("/image")
