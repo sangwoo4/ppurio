@@ -1,4 +1,4 @@
-package free_capston.ppurio.Dto;
+package free_capston.ppurio.Ppurio.Dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Data;

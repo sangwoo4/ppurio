@@ -1,9 +1,10 @@
-package free_capston.ppurio.Ppurio;
+package free_capston.ppurio.Ppurio.Service;
 
-import free_capston.ppurio.Dto.GenerateMessageDto;
-import free_capston.ppurio.Dto.RequestAiMessageDto;
-import free_capston.ppurio.Dto.ResponseAiTextAndMessageDto;
-import free_capston.ppurio.Dto.ResponseAiTextDto;
+import free_capston.ppurio.Ppurio.Dto.GenerateMessageDto;
+import free_capston.ppurio.Ppurio.Dto.RequestAiMessageDto;
+import free_capston.ppurio.Ppurio.Dto.ResponseAiTextAndMessageDto;
+import free_capston.ppurio.Ppurio.Dto.ResponseAiTextDto;
+import free_capston.ppurio.Ppurio.MessageGenerationStrategy;
 import free_capston.ppurio.Repository.UserRepository;
 import free_capston.ppurio.model.User;
 import lombok.AllArgsConstructor;
@@ -15,32 +16,19 @@ import org.springframework.web.client.RestTemplate;
 @AllArgsConstructor
 public class MessageService {
     private final UserRepository userRepository;
-    private final RestTemplate restTemplate;
+    private final MessageGenerationStrategy<ResponseAiTextDto> textMessageStrategy;
+    private final MessageGenerationStrategy<ResponseAiTextAndMessageDto> textAndMessageStrategy;
     private final String AiTextUrl = "http://localhost:8000/text";
-    private final String AiTextAndImageUrl = "http://localhost:8000/text";
+    private final String AiTextAndImageUrl = "http://localhost:8000/image";
 
     public ResponseAiTextDto generateAiText(GenerateMessageDto generateMessageDto) {
         RequestAiMessageDto requestAiMessageDto = setRequestAiMessageDto(new RequestAiMessageDto(), generateMessageDto);
-        System.out.println("requestAiMessageDto" + requestAiMessageDto);
-        ResponseEntity<ResponseAiTextDto> responseEntity = restTemplate.postForEntity(AiTextUrl, requestAiMessageDto, ResponseAiTextDto.class);
-
-        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            return responseEntity.getBody();
-        } else {
-            throw new RuntimeException("AI 메시지 요청 실패: " + responseEntity.getStatusCode());
-        }
+        return textMessageStrategy.generateMessage(requestAiMessageDto, AiTextUrl);
     }
 
     public ResponseAiTextAndMessageDto generateAiTextAndMessage(GenerateMessageDto generateMessageDto) {
         RequestAiMessageDto requestAiMessageDto = setRequestAiMessageDto(new RequestAiMessageDto(), generateMessageDto);
-        System.out.println("requestAiMessageDto" + requestAiMessageDto);
-        ResponseEntity<ResponseAiTextAndMessageDto> responseEntity = restTemplate.postForEntity(AiTextAndImageUrl, requestAiMessageDto, ResponseAiTextAndMessageDto.class);
-
-        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            return responseEntity.getBody();
-        } else {
-            throw new RuntimeException("AI 메시지 요청 실패: " + responseEntity.getStatusCode());
-        }
+        return textAndMessageStrategy.generateMessage(requestAiMessageDto, AiTextAndImageUrl);
     }
 
     private RequestAiMessageDto setRequestAiMessageDto(RequestAiMessageDto requestAiMessageDto, GenerateMessageDto generateMessageDto) {

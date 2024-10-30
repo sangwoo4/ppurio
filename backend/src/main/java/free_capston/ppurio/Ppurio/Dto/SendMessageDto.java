@@ -1,4 +1,4 @@
-package free_capston.ppurio.Dto;
+package free_capston.ppurio.Ppurio.Dto;
 
 import lombok.Data;
 import java.util.Map;

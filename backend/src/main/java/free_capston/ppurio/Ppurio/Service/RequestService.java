@@ -1,10 +1,10 @@
-package free_capston.ppurio.Ppurio;
+package free_capston.ppurio.Ppurio.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import free_capston.ppurio.Dto.FileDto;
-import free_capston.ppurio.Dto.SendMessageDto;
+import free_capston.ppurio.Ppurio.Dto.FileDto;
+import free_capston.ppurio.Ppurio.Dto.SendMessageDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;

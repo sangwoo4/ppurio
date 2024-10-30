@@ -1,8 +1,8 @@
 package free_capston.ppurio.Account;
 
-import free_capston.ppurio.Dto.LoginDto;
+import free_capston.ppurio.Account.Dto.LoginDto;
 import free_capston.ppurio.Dto.ResponseDto;
-import free_capston.ppurio.Dto.SignUpDto;
+import free_capston.ppurio.Account.Dto.SignUpDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

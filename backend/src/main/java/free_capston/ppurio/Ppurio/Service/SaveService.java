@@ -1,6 +1,6 @@
-package free_capston.ppurio.Ppurio;
+package free_capston.ppurio.Ppurio.Service;
 
-import free_capston.ppurio.Dto.SendMessageDto;
+import free_capston.ppurio.Ppurio.Dto.SendMessageDto;
 import free_capston.ppurio.Repository.ImageRepository;
 import free_capston.ppurio.Repository.MessageRepository;
 import free_capston.ppurio.Repository.UserRepository;
