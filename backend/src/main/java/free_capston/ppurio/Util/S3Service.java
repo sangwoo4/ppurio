@@ -11,6 +11,8 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
 
@@ -31,35 +33,22 @@ public class S3Service {
         this.bucket = bucket;
     }
 
-//    public String uploadFile(InputStream inputStream, String fileName, String contentType) throws IOException {
-//        String uniqueFileName = UUID.randomUUID() + "_" + fileName;
-//
-//
-//        s3Client.putObject(PutObjectRequest.builder()
-//                        .bucket(bucket)
-//                        .key(uniqueFileName)
-//                        .contentType(contentType)
-//                        .build(),
-//                RequestBody.fromInputStream(inputStream, inputStream.available()));
-//        System.out.println("inputStream222 === " + inputStream);
-//        return String.format("%s%s", s3Url, uniqueFileName);
-//    }
-public String uploadFile(InputStream inputStream, String fileName, String contentType) throws IOException {
-    String uniqueFileName = UUID.randomUUID() + "_" + fileName;
+    public String uploadFile(InputStream inputStream, String fileName, String contentType) throws IOException {
+        String uniqueFileName = UUID.randomUUID() + "_" + fileName;
 
-    // InputStream의 길이를 가져오는 대신, FileInputStream을 사용하여 파일을 업로드합니다.
-    long contentLength = inputStream.available();
-    if (contentLength <= 0) {
-        throw new IOException("Input stream is empty or could not determine the size.");
+        long contentLength = inputStream.available();
+        if (contentLength <= 0) {
+            throw new IOException("Input stream is empty or could not determine the size.");
+        }
+
+        s3Client.putObject(PutObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(uniqueFileName)
+                        .contentType(contentType)
+                        .build(),
+                RequestBody.fromInputStream(inputStream, contentLength));
+
+        // URL을 올바르게 인코딩
+        return String.format("%s%s", s3Url, URLEncoder.encode(uniqueFileName, StandardCharsets.UTF_8));
     }
-
-    s3Client.putObject(PutObjectRequest.builder()
-                    .bucket(bucket)
-                    .key(uniqueFileName)
-                    .contentType(contentType)
-                    .build(),
-            RequestBody.fromInputStream(inputStream, contentLength));
-
-    return String.format("%s%s", s3Url, uniqueFileName);
-}
 }

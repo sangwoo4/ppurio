@@ -149,7 +149,10 @@ public class ImageService {
             throw new IOException("Failed to download file: " + fileUrl + " with response code: " + connection.getResponseCode());
         }
 
-        String fileName = extractFileName(fileUrl).replace(".png", ".jpg");  // 파일명을 .jpg로 변경
+        String fileName = extractFileName(fileUrl);
+        if (!fileName.endsWith(".jpg")) {
+            fileName = fileName.replace(".png", "") + ".jpg";  // 확장자를 .jpg로 변경하고 추가
+        }
         String contentType = "image/jpeg";  // 이미지 타입을 JPG로 설정
 
         // PNG 이미지를 BufferedImage로 로드
