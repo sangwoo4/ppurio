@@ -2,7 +2,7 @@ fastapi
 uvicorn
 openai
 python-dotenv
-PIL
+Pillow
 requests
 pydantic
 uuid

@@ -5,7 +5,7 @@ from typing import List
 from fastapi import HTTPException
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
-from ai.Utils.schemas import TextRequest
+from Utils.schemas import TextRequest, TextResponse
 
 # .env 파일 로드
 load_dotenv()

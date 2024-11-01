@@ -1,7 +1,7 @@
 # uvicorn.py (ai/Utils)
-import ai.Utils.main as main
+import Utils.main as main
 from fastapi import FastAPI
-from ai.Text.text import categorize, TextRequest, TextResponse
+from Text.text import categorize, TextRequest, TextResponse
 
 app = FastAPI()
 
