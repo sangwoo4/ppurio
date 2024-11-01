@@ -26,6 +26,7 @@ public class MessageController {
     public ResponseDto<?> sendMessage(@RequestBody SendMessageDto sendMessageDto) {
         List<String> newUrls = imageService.changeUrlAndUploadImages(sendMessageDto); //새로운 url을 생성 후 s3에 업로드
         SendMessageDto newSendMessageDto = imageService.updateFileUrls(sendMessageDto, newUrls); //변경된 url로 dto 수정
+        System.out.println("newSendMessageDto" + newSendMessageDto);
         requestService.requestSend(newSendMessageDto);
         saveService.saveMessageAndImage(newSendMessageDto);
 

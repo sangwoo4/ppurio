@@ -34,8 +34,8 @@ public class S3Service {
     }
 
     public String uploadFile(InputStream inputStream, String fileName, String contentType) throws IOException {
-        String uniqueFileName = UUID.randomUUID() + "_" + fileName;
-
+//        String uniqueFileName = UUID.randomUUID() + "_" + fileName;
+        String uniqueFileName = String.valueOf(UUID.randomUUID()) + ".jpg";
         long contentLength = inputStream.available();
         if (contentLength <= 0) {
             throw new IOException("Input stream is empty or could not determine the size.");
