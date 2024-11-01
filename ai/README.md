@@ -9,10 +9,6 @@ ppurio/
 |── ai/
 |    |── Image/
 |    |    |── image.py
-|    |── ImageStorage/
-|    |── __pycache__/
-|    |── ...
-|    |──
 |    |── Text/
 |    |    |── text.py
 |    |── Utils/
@@ -83,33 +79,39 @@ pydantic
 - **요청 형식**:
   ```json
   {
-    "input": "행사 홍보",
-    "hashtag": ["할인", "이벤트"]
+    "text": "장도윤 할아버지 부고 문자, 너무 정중하거나 무겁지 않고 마지막 자리를 함께 해달라는 말투",
+    "hashtag": ["애도", "추모"],
+    "field": "장례식장",
+    "mood": ["정적", "근엄"]
   }
   ```
 - **응답 형식**:
   ```json
   {
-    "response": "이번 행사를 놓치지 마세요! 할인과 이벤트가 가득합니다."
+    "text": "안녕하세요. 장도윤 할아버지께서 편안한 곳으로 가셨습니다. 마지막 자리를 함께 해주시면 감사하겠습니다. 고인의 삶을 기리며, 함께 나누는 시간이 되었으면 좋겠습니다. #장례식장\n\n부디 많은 분들이 오셔서 따뜻한 마음을 전해주시길 바랍니다."
   }
   ```
 
-### 2. 이미지 생성(미완성)
+### 2. 이미지 생성
 
-`ai/Image/image.py` 파일에는 이미지 생성을 위한 함수가 포함되어 있습니다. 이 기능은 OpenAI의 DALL-E 모델을 사용해 이미지를 생성하고, JPG 형식으로 변환하여 저장합니다. 또한 jpg 변환시 이미지 용량을 축소 시킴으로 저장공간 확보에 도움이 됩니다.
+`ai/Image/image.py` 파일에는 이미지 생성을 위한 함수가 포함되어 있습니다. 이 기능은 OpenAI의 DALL-E 모델을 사용해 이미지를 PNG 형식으로 생성합니다, 또한 동시에 텍스트를 생성합니다.
 
 - **API 경로**: `/image`
 - **HTTP 메서드**: `POST`
 - **요청 형식**:
   ```json
   {
-    "prompt": "고양이 이미지"
+    "text": "장도윤 할아버지 부고 문자, 너무 정중하거나 무겁지 않고 마지막 자리를 함께 해달라는 말투",
+    "hashtag": ["애도", "추모"],
+    "field": "장례식장",
+    "mood": ["정적", "근엄"]
   }
   ```
 - **응답 형식**:
   ```json
   {
-    "image_url": "http://localhost:8000/images/{filename}.jpg"
+    "text": "안녕하세요. 슬픈 소식을 전하게 되어 마음이 무겁습니다. 장도윤 할아버지께서 별세하셨습니다. 마지막 자리를 함께 해주시면 감사하겠습니다. 애도와 추모의 마음을 나누는 시간이 되었으면 합니다. 많은 분들이 함께 해주시면 좋겠습니다. 감사합니다.",
+    "url": "https://oaidalleapiprodscus.blob.core.windows.net/private/org-ehgMCemGO2ul4Qzq3gq7yZQf/user-e9qXNEvBOGclVlHumV8ZQ89k/img-hMVv9wLkjGUxHgaJc6ObmYlw.png?st=2024-11-01T14%3A01%3A59Z&se=2024-11-01T16%3A01%3A59Z&sp=r&sv=2024-08-04&sr=b&rscd=inline&rsct=image/png&skoid=d505667d-d6c1-4a0a-bac7-5c84a87759f8&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-11-01T01%3A52%3A53Z&ske=2024-11-02T01%3A52%3A53Z&sks=b&skv=2024-08-04&sig=GnD80QlABIoy33VWq%2BUUyydEGc35T/vFEkfBrqif%2BIw%3D"
   }
   ```
 

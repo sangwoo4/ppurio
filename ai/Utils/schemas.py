@@ -4,9 +4,19 @@ from typing import List, Optional
 
 class TextRequest(BaseModel):
     text: str
-    filed: str
+    field: str
     hashtag: Optional[List[str]] = None
     mood: Optional[List[str]] = None
 
 class TextResponse(BaseModel):
-    response: str
+    text: str
+
+class ImageCreateRequest(BaseModel):
+    text: str
+    field: str
+    hashtag: Optional[List[str]] = None
+    mood: Optional[List[str]] = None
+
+class ImageCreateResponse(BaseModel):
+    text: str
+    url: str
