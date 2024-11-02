@@ -99,7 +99,8 @@ async def generate_image(request: ImageCreateRequest) -> ImageCreateResponse:
             f"해시태그: {', '.join(request.hashtag)}\n"
             "해당 해시태그를 반드시 포함하여 적절한 문자 메세지 형식을 제안해 주세요.\n"
             f"업종명: {request.field}\n"
-            "전달 받은 업종명에 따라 문자 메세지의 분위기, 구조, 느낌 등등을 설정해줘"
+            f"분위기: {', '.join(request.mood or [])}\n"
+            "전달 받은 업종명과 분위기에 따라 텍스트의 분위기를 설정해줘"
         )
 
         # 비동기 OpenAI 이미지 생성 API 호출
