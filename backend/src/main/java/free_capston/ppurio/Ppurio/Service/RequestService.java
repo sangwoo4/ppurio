@@ -33,7 +33,6 @@ public class RequestService {
     public void requestSend(SendMessageDto sendMessageDto){
         String basicAuthorization = Base64.getEncoder().encodeToString((PPURIO_ACCOUNT + ":" + API_KEY).getBytes());
         Map<String, Object> tokenResponse = getToken(URI, basicAuthorization);
-//        Map<String, Object> sendResponse = send(URI, (String) tokenResponse.get("token"), sendMessageDto);
         send(URI, (String) tokenResponse.get("token"), sendMessageDto);
     }
 

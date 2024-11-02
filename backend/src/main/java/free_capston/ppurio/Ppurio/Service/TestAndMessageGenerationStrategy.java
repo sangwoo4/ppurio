@@ -13,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 public class TestAndMessageGenerationStrategy implements MessageGenerationStrategy<ResponseAiTextAndMessageDto> {
     private final RestTemplate restTemplate;
 
-
     @Override
     public ResponseAiTextAndMessageDto generateMessage(RequestAiMessageDto requestAiMessageDto, String apiUrl) {
         ResponseEntity<ResponseAiTextAndMessageDto> responseEntity = restTemplate.postForEntity(apiUrl, requestAiMessageDto, ResponseAiTextAndMessageDto.class);

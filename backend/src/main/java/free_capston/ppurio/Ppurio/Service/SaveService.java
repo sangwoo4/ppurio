@@ -28,7 +28,7 @@ public class SaveService {
         Set<Image> images = new HashSet<>();
         sendMessageDto.getFiles().forEach(fileDto -> {
             Image image = buildImageEntity(fileDto.getFileUrl());
-            image = imageRepository.save(image); // 저장 후 ID를 확인할 수 있도록 수정
+            image = imageRepository.save(image);
             images.add(image);
         });
 

@@ -18,9 +18,10 @@ public class MessageService {
     private final UserRepository userRepository;
     private final MessageGenerationStrategy<ResponseAiTextDto> textMessageStrategy;
     private final MessageGenerationStrategy<ResponseAiTextAndMessageDto> textAndMessageStrategy;
-    private final String AiTextUrl = "http://localhost:8000/text";
-    private final String AiTextAndImageUrl = "http://localhost:8000/image";
-
+//    private final String AiTextUrl = "http://localhost:8000/text";
+//    private final String AiTextAndImageUrl = "http://localhost:8000/image";
+    private final String AiTextUrl = "http://fastapi:8000/text";
+    private final String AiTextAndImageUrl = "http://fastapi:8000/image";
     public ResponseAiTextDto generateAiText(GenerateMessageDto generateMessageDto) {
         RequestAiMessageDto requestAiMessageDto = setRequestAiMessageDto(new RequestAiMessageDto(), generateMessageDto);
         return textMessageStrategy.generateMessage(requestAiMessageDto, AiTextUrl);
