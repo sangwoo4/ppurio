@@ -12,7 +12,7 @@ async def generate_text_endpoint(request: TextRequest):
     response = await generate_text(request)
     return response
 
-@app.post("/image")
+@app.post("/text/image")
 async def generate_image_text_endpoint(request: ImageCreateRequest):
     response = await generate_image_and_text(request)
     return response
