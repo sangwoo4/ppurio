@@ -5,7 +5,7 @@ from typing import List
 from fastapi import HTTPException
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
-from ai.Utils.schemas import ImageCreateRequest, ImageCreateResponse
+from ai.Utils.schemas import ImageCreateRequest, ImageCreateResponse, ImageTextCreateResponse
 
 # .env 파일 로드
 load_dotenv()
@@ -26,7 +26,7 @@ def logger_setup():
 logger = logger_setup()
 
 # 비동기 이미지 생성 및 텍스트 생성 함수
-async def generate_image_and_text(request: ImageCreateRequest) -> ImageCreateResponse:
+async def generate_image_and_text(request: ImageCreateRequest) -> ImageTextCreateResponse:
     try:
         logger.info(f"요청받음 - {ImageCreateRequest}\n")
 
@@ -86,3 +86,36 @@ async def generate_image_and_text(request: ImageCreateRequest) -> ImageCreateRes
     except Exception as e:
         logger.error(f"오류 발생: {e}")
         raise HTTPException(status_code=500, detail="이미지 및 텍스트 생성 중 오류가 발생했습니다.")
+    
+    # 비동기 이미지 생성 함수
+async def generate_image(request: ImageCreateRequest) -> ImageCreateResponse:
+    try:
+        logger.info(f"요청받음 - {ImageCreateRequest}\n")
+
+        # prompt를 문자열로 변환
+        prompt = (
+            "You are a helpful assistant for creating text messages that must include the provided hashtags. "
+            f"내용: {request.text}\n"
+            f"해시태그: {', '.join(request.hashtag)}\n"
+            "해당 해시태그를 반드시 포함하여 적절한 문자 메세지 형식을 제안해 주세요.\n"
+            f"업종명: {request.field}\n"
+            "전달 받은 업종명에 따라 문자 메세지의 분위기, 구조, 느낌 등등을 설정해줘"
+        )
+
+        # 비동기 OpenAI 이미지 생성 API 호출
+        response = await client.images.generate(
+            model="dall-e-3",
+            prompt=prompt,
+            n=1,  # 생성할 이미지 수
+            size="1024x1024"
+        )
+
+        image_url = response.data[0].url
+        logger.info(f"OpenAI로부터 받은 이미지 URL: {image_url}")
+
+        # 변환된 이미지 파일 경로 반환
+        return ImageCreateResponse(image_url=image_url)
+
+    except Exception as e:
+        logger.error(f"오류 발생: {e}")
+        raise HTTPException(status_code=500, detail="이미지 생성 중 오류가 발생했습니다.")
