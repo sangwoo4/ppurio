@@ -117,7 +117,7 @@ async def generate_image(request: ImageCreateRequest) -> ImageCreateResponse:
         logger.info(f"OpenAI로부터 받은 이미지 URL: {image_url}")
 
         # 변환된 이미지 파일 경로 반환
-        return ImageCreateResponse(image_url=image_url)
+        return ImageCreateResponse(url=image_url)
 
     except Exception as e:
         logger.error(f"오류 발생: {e}")
