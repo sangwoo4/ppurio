@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class RequestAiMessageDto {
     private String text;
-    private List<String> hashTag;
+    private List<String> hashtag;
     private String field;
     private  List<String> mood;
 }

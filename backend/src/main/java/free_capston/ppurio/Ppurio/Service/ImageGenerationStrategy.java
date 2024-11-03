@@ -17,6 +17,7 @@ public class ImageGenerationStrategy implements MessageGenerationStrategy<Respon
 
     @Override
     public ResponseAiImageDto generateMessage(RequestAiMessageDto requestAiMessageDto, String apiUrl) {
+        System.out.println("전송할 요청 DTO: " + requestAiMessageDto); // 요청 DTO 로그
         ResponseEntity<ResponseAiImageDto> responseEntity = restTemplate.postForEntity(apiUrl, requestAiMessageDto, ResponseAiImageDto.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return responseEntity.getBody();

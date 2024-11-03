@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000" ,"http://ppurio-1.s3-website.ap-northeast-2.amazonaws.com")
+                .allowedOrigins("http://localhost:3000", "http://ppurio-1.s3-website.ap-northeast-2.amazonaws.com")
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true);
@@ -23,3 +23,4 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/app/uploads/**")
                 .addResourceLocations("/uploads/");
     }
+}
