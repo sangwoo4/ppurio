@@ -6,7 +6,7 @@ from fastapi import HTTPException
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 
-from Utils.schemas import ImageCreateRequest, ImageCreateResponse
+from Utils.schemas import ImageCreateRequest, ImageCreateResponse, ImageTextCreateResponse
 
 
 # .env 파일 로드
@@ -83,7 +83,7 @@ async def generate_image_and_text(request: ImageCreateRequest) -> ImageTextCreat
         logger.info(f"OpenAI로부터 받은 이미지 URL: {url}")
 
         # 변환된 이미지 파일 경로 및 생성된 텍스트 반환
-        return ImageCreateResponse(url=url, text=text)
+        return ImageTextCreateResponse(url=url, text=text)
 
     except Exception as e:
         logger.error(f"오류 발생: {e}")
