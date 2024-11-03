@@ -1,14 +1,17 @@
 package free_capston.ppurio.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
-import org.w3c.dom.Text;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Builder
 @Table(name = "message")
+@AllArgsConstructor
 @NoArgsConstructor
 public class Message {
     @Id
@@ -19,10 +22,16 @@ public class Message {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "image_id", nullable = false)
-    private Image image;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "imageList",
+            joinColumns = @JoinColumn(name ="message_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id")
+    )
+    private Set<Image> images = new HashSet<>();
 
     @Column(columnDefinition = "TEXT")
     private String messageContent;
+
 }

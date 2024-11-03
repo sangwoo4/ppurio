@@ -1,9 +1,10 @@
 # uvicorn.py (ai/Utils)
-import ai.Utils.main as main
+import Utils.main as main
 from fastapi import FastAPI
-from ai.Text.text import generate_text, TextRequest, TextResponse
-from ai.Image.image import generate_image_and_text, ImageCreateRequest
-from ai.Image.image import generate_image, ImageCreateRequest
+
+from Text.text import generate_text, TextRequest, TextResponse
+from Image.image import generate_image_and_text, ImageCreateRequest
+from Image.image import generate_image, ImageCreateRequest
 
 app = FastAPI()
 
