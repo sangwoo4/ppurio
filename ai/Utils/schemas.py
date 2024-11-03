@@ -17,6 +17,9 @@ class ImageCreateRequest(BaseModel):
     hashtag: Optional[List[str]] = None
     mood: Optional[List[str]] = None
 
-class ImageCreateResponse(BaseModel):
+class ImageTextCreateResponse(BaseModel):
     text: str
+    url: str
+
+class ImageCreateResponse(BaseModel):
     url: str

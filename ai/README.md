@@ -39,10 +39,10 @@ source myenv/bin/activate
 
 ## 필요 라이브러리 설치
 
-이 프로젝트를 실행하기 위해 필요한 라이브러리는 `install.txt` 파일에 포함되어 있습니다. 다음 명령어로 필요한 라이브러리를 설치할 수 있습니다.
+이 프로젝트를 실행하기 위해 필요한 라이브러리는 `requirements..txt` 파일에 포함되어 있습니다. 다음 명령어로 필요한 라이브러리를 설치할 수 있습니다.
 
 ```bash
-pip install -r install.txt
+pip install -r requirements..txt
 ```
 
 ### 주요 라이브러리 목록
@@ -56,7 +56,7 @@ pip install -r install.txt
 - `pydantic`: 데이터 검증 및 설정 관리를 위한 라이브러리
 - `uuid`: 고유 식별자 생성을 위한 라이브러리
 
-### install.txt
+### requirements..txt
 
 ```
 fastapi

@@ -5,7 +5,9 @@ from typing import List
 from fastapi import HTTPException
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
+
 from Utils.schemas import TextRequest, TextResponse
+
 
 # .env 파일 로드
 load_dotenv()
@@ -23,15 +25,17 @@ def logger_setup():
 
 logger = logger_setup()
 
-async def categorize(request: TextRequest) -> dict:
+async def generate_text(request: TextRequest) -> TextResponse:
     try:
-        logger.info(f"요청받음 - 입력: {request.text}\n해시태그: {request.hashtag}\n {request.field}")
+        logger.info(f"요청받음 - 입력: {request.text}\n해시태그: {request.hashtag}\n"
+                    f"업종명: {request.field}\n 분위기:{request.mood}\n")
 
         # Chat 형식 메시지 작성
         messages = [
             {"role": "system", "content": "You are a helpful assistant for creating text messages"},
             {"role": "user", "content": 
              f"내용: {request.text}\n"
+             f"해시태그: {', '.join(request.hashtag or [])}\n"
             "해당 해시태그를 반드시 문자 메세지 본문에 단어로 포함해서 적절하게 생성해줘.\n"
              f"업종명: {request.field}\n"
              f"분위기: {', '.join(request.mood or [])}\n"
@@ -56,7 +60,7 @@ async def categorize(request: TextRequest) -> dict:
         if not text_response:
             raise HTTPException(status_code=500, detail="OpenAI로부터 응답이 없습니다")
 
-        return {"text": text_response}
+        return TextResponse(text=text_response)
 
     except Exception as e:
         logger.error(f"오류 발생: {e}")
