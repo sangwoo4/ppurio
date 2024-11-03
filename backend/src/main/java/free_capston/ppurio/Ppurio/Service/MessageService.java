@@ -1,36 +1,48 @@
 package free_capston.ppurio.Ppurio.Service;
 
-import free_capston.ppurio.Ppurio.Dto.GenerateMessageDto;
-import free_capston.ppurio.Ppurio.Dto.RequestAiMessageDto;
-import free_capston.ppurio.Ppurio.Dto.ResponseAiTextAndMessageDto;
-import free_capston.ppurio.Ppurio.Dto.ResponseAiTextDto;
+import free_capston.ppurio.Ppurio.Dto.*;
 import free_capston.ppurio.Ppurio.MessageGenerationStrategy;
 import free_capston.ppurio.Repository.UserRepository;
 import free_capston.ppurio.model.User;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @AllArgsConstructor
 public class MessageService {
     private final UserRepository userRepository;
-    private final MessageGenerationStrategy<ResponseAiTextDto> textMessageStrategy;
+    private final MessageGenerationStrategy<ResponseAiTextDto> textStrategy;
     private final MessageGenerationStrategy<ResponseAiTextAndMessageDto> textAndMessageStrategy;
+    private final MessageGenerationStrategy<ResponseAiImageDto> imageStrategy;
 //    private final String AiTextUrl = "http://localhost:8000/text";
 //    private final String AiTextAndImageUrl = "http://localhost:8000/image";
-    private final String AiTextUrl = "http://fastapi:8000/text";
-    private final String AiTextAndImageUrl = "http://fastapi:8000/image";
+
+    @Value("${ai.text-url}")
+    private String aiTextUrl;
+
+    @Value("${ai.image-url}")
+    private String aiImageUrl;
+
+    @Value("${ai.text-and-image-url}")
+    private String aiTextAndImageUrl;
+
+
     public ResponseAiTextDto generateAiText(GenerateMessageDto generateMessageDto) {
         RequestAiMessageDto requestAiMessageDto = setRequestAiMessageDto(new RequestAiMessageDto(), generateMessageDto);
-        return textMessageStrategy.generateMessage(requestAiMessageDto, AiTextUrl);
+        return textStrategy.generateMessage(requestAiMessageDto, aiTextUrl);
     }
 
-    public ResponseAiTextAndMessageDto generateAiTextAndMessage(GenerateMessageDto generateMessageDto) {
+    public ResponseAiImageDto generateAiImage(GenerateMessageDto generateMessageDto) {
         RequestAiMessageDto requestAiMessageDto = setRequestAiMessageDto(new RequestAiMessageDto(), generateMessageDto);
-        return textAndMessageStrategy.generateMessage(requestAiMessageDto, AiTextAndImageUrl);
+        return imageStrategy.generateMessage(requestAiMessageDto, aiImageUrl);
     }
+
+    public ResponseAiTextAndMessageDto generateAiTextAndImage(GenerateMessageDto generateMessageDto) {
+        RequestAiMessageDto requestAiMessageDto = setRequestAiMessageDto(new RequestAiMessageDto(), generateMessageDto);
+        return textAndMessageStrategy.generateMessage(requestAiMessageDto, aiTextAndImageUrl);
+    }
+
 
     private RequestAiMessageDto setRequestAiMessageDto(RequestAiMessageDto requestAiMessageDto, GenerateMessageDto generateMessageDto) {
         User user = userRepository.findById(generateMessageDto.getUserId())
@@ -41,4 +53,6 @@ public class MessageService {
         requestAiMessageDto.setHashTag(generateMessageDto.getHashTag());
         return requestAiMessageDto;
     }
+
+
 }

@@ -10,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @AllArgsConstructor
-class TextMessageGenerationStrategy implements MessageGenerationStrategy<ResponseAiTextDto> {
+public class TextGenerationStrategy implements MessageGenerationStrategy<ResponseAiTextDto> {
     private final RestTemplate restTemplate;
 
     @Override

@@ -40,8 +40,16 @@ public class MessageController {
     }
 
     @PostMapping("/generate/image")
-    public ResponseDto<?> generateTextAndMessage(@RequestBody GenerateMessageDto generateMessageDto){
-        ResponseAiTextAndMessageDto responseAiTextDto = messageService.generateAiTextAndMessage(generateMessageDto);
+    public ResponseDto<?> generateImage(@RequestBody GenerateMessageDto generateMessageDto){
+        ResponseAiImageDto responseAiTextDto = messageService.generateAiImage(generateMessageDto);
         return ResponseDto.setSuccessData("메세지, 이미지 생성 성공", responseAiTextDto);
     }
+
+    @PostMapping("/generate/image")
+    public ResponseDto<?> generateTextAndImage(@RequestBody GenerateMessageDto generateMessageDto){
+        ResponseAiTextAndMessageDto responseAiTextDto = messageService.generateAiTextAndImage(generateMessageDto);
+        return ResponseDto.setSuccessData("메세지, 이미지 생성 성공", responseAiTextDto);
+    }
+
+
 }

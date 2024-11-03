@@ -1,21 +1,23 @@
 package free_capston.ppurio.Ppurio.Service;
 
 import free_capston.ppurio.Ppurio.Dto.RequestAiMessageDto;
-import free_capston.ppurio.Ppurio.Dto.ResponseAiTextAndMessageDto;
+import free_capston.ppurio.Ppurio.Dto.ResponseAiImageDto;
+import free_capston.ppurio.Ppurio.Dto.ResponseAiTextDto;
 import free_capston.ppurio.Ppurio.MessageGenerationStrategy;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+
 @AllArgsConstructor
 @Service
-public class TestAndMessageGenerationStrategy implements MessageGenerationStrategy<ResponseAiTextAndMessageDto> {
+public class ImageGenerationStrategy implements MessageGenerationStrategy<ResponseAiImageDto> {
     private final RestTemplate restTemplate;
 
     @Override
-    public ResponseAiTextAndMessageDto generateMessage(RequestAiMessageDto requestAiMessageDto, String apiUrl) {
-        ResponseEntity<ResponseAiTextAndMessageDto> responseEntity = restTemplate.postForEntity(apiUrl, requestAiMessageDto, ResponseAiTextAndMessageDto.class);
+    public ResponseAiImageDto generateMessage(RequestAiMessageDto requestAiMessageDto, String apiUrl) {
+        ResponseEntity<ResponseAiImageDto> responseEntity = restTemplate.postForEntity(apiUrl, requestAiMessageDto, ResponseAiImageDto.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return responseEntity.getBody();
         } else {
