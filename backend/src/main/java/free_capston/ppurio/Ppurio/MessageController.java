@@ -45,7 +45,7 @@ public class MessageController {
         return ResponseDto.setSuccessData("메세지, 이미지 생성 성공", responseAiTextDto);
     }
 
-    @PostMapping("/generate/image")
+    @PostMapping("/generate/textAndImage")
     public ResponseDto<?> generateTextAndImage(@RequestBody GenerateMessageDto generateMessageDto){
         ResponseAiTextAndMessageDto responseAiTextDto = messageService.generateAiTextAndImage(generateMessageDto);
         return ResponseDto.setSuccessData("메세지, 이미지 생성 성공", responseAiTextDto);
