@@ -14,7 +14,12 @@
 
 ### 2. ai 디렉토리
 - ai env 파일 생성
-```bash
+  ```bash
   cd ai
   vi .env
   openai_api_key=YOUR_OPENAI_API_KEY
+
+### 3. root 디렉토리
+- docker build, run
+  ```bash
+    docker compose up --build
