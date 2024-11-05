@@ -2,7 +2,7 @@ package free_capston.ppurio.Account;
 
 import free_capston.ppurio.Account.Dto.LoginDto;
 import free_capston.ppurio.Account.Dto.LoginResponseDto;
-import free_capston.ppurio.Dto.ResponseDto;
+import free_capston.ppurio.Util.ResponseDto;
 import free_capston.ppurio.Account.Dto.SignUpDto;
 import free_capston.ppurio.Repository.UserRepository;
 import free_capston.ppurio.model.User;

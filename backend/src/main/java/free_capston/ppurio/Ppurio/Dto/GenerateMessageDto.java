@@ -11,4 +11,5 @@ public class GenerateMessageDto {
     private String field;
     private  List<String> mood;
     private Long userId;
+    private String category;
 }

@@ -1,4 +1,4 @@
-package free_capston.ppurio.Dto;
+package free_capston.ppurio.Util;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -9,5 +9,6 @@ public class RequestAiMessageDto {
     private String text;
     private List<String> hashtag;
     private String field;
+    private String category;
     private  List<String> mood;
 }
