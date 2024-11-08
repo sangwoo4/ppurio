@@ -14,11 +14,11 @@ const Header = () => {
         <span className="logo-text">Daou Tech</span>
       </div>
       <nav className="nav-links">
-        <Link className="nav-link home" to="/"><IoHome className="icon" />홈</Link>
+        <Link className="nav-link" to="/"><IoHome className="icon" />홈</Link>
         <Link className="nav-link" to="/chatbot"><TbMessageChatbot className="icon" />챗봇</Link>
         <Link className="nav-link" to="/send/message"><TbMessageCirclePlus className="icon" />메세지 전송</Link>
-        <Link className="nav-link" to="/create/ai"><GiPerspectiveDiceSixFacesRandom className="icon" />AI 생성</Link>
-        <Link className="nav-link login-link" to="/login"><MdLogin className="icon" />로그인</Link>
+        <Link className="nav-link" to="/create/ai"><GiPerspectiveDiceSixFacesRandom className="icon" />이미지 편집</Link>
+        <Link className="nav-link" to="/login"><MdLogin className="icon" />로그인</Link>
       </nav>
     </header>
   );

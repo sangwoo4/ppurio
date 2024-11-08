@@ -1,18 +1,28 @@
 import React, { useState } from 'react';
 
-const BusinessNumberCheck = () => {
-  const [code1, setCode1] = useState('');
-  const [code2, setCode2] = useState('');
-  const [code3, setCode3] = useState('');
-  const [businessInfo, setBusinessInfo] = useState(null); // 사업자 정보 상태 추가
+const TestFile = () => {
+  const [businessNumber, setBusinessNumber] = useState('');
+  const [businessInfo, setBusinessInfo] = useState(null);
+  const [isVerified, setIsVerified] = useState(false);
+  const [verificationMessage, setVerificationMessage] = useState('');
 
-  // 인증키를 변수로 선언
   const serviceKey = '4u6cu0f2lQ%2BX3Y9XHDyP0%2FCgoAtjs%2FYBSGKVlpDey3LAxgfMaPONswga8xCwhLqwWoz1ReVpiiQuDAUVB72fbw%3D%3D';
 
+  // 입력 시 '-' 자동 추가
+  const handleBusinessNumberChange = (e) => {
+    const value = e.target.value.replace(/[^0-9]/g, ''); // 숫자 외 문자 제거
+    if (value.length <= 10) {
+      const formattedValue = value
+        .replace(/(\d{3})(\d{2})(\d{0,5})/, '$1-$2-$3')
+        .replace(/-$/, ''); // 끝에 '-'가 붙지 않게 처리
+      setBusinessNumber(formattedValue);
+    }
+  };
+
   const handleCodeCheck = async () => {
-    const fullCode = `${code1}${code2}${code3}`;
+    const fullCode = businessNumber.replace(/-/g, ''); // API 전송 시 '-' 제거
     const data = {
-      b_no: [fullCode] // API에 전송할 데이터 포맷
+      b_no: [fullCode]
     };
 
     try {
@@ -28,20 +38,20 @@ const BusinessNumberCheck = () => {
       const result = await response.json();
       console.log(result);
 
-      if (result.match_cnt === "1") {
-        // 성공
-        console.log("success");
-        setBusinessInfo(result.data[0]); // 사업자 정보 상태 업데이트
+      if (result.match_cnt === 1) { // 숫자형 1로 비교
+        setBusinessInfo(result.data[0]);
+        setIsVerified(true);
+        setVerificationMessage("인증되었습니다");
       } else {
-        // 실패
-        console.log("fail");
-        alert(result.data[0]?.tax_type || '유효하지 않은 사업자 등록 번호입니다.');
-        setBusinessInfo(null); // 실패 시 사업자 정보 초기화
+        setBusinessInfo(null);
+        setIsVerified(false);
+        setVerificationMessage("등록되지 않은 사업자등록번호입니다.");
       }
     } catch (error) {
       console.log("error", error);
-      alert('API 요청 중 오류가 발생했습니다.');
-      setBusinessInfo(null); // 오류 발생 시 사업자 정보 초기화
+      setBusinessInfo(null);
+      setIsVerified(false);
+      setVerificationMessage('API 요청 중 오류가 발생했습니다.');
     }
   };
 
@@ -53,46 +63,29 @@ const BusinessNumberCheck = () => {
             <tr>
               <th scope="row">사업자등록번호</th>
               <td className="left_5">
-                <div>
-                  <input
-                    type="text"
-                    name="code1"
-                    value={code1}
-                    onChange={(e) => setCode1(e.target.value)}
-                    size="3"
-                    maxLength="3"
-                    style={{ imeMode: 'disabled' }}
-                    placeholder="사업자등록번호1"
-                  />
-                  -
-                  <input
-                    type="text"
-                    name="code2"
-                    value={code2}
-                    onChange={(e) => setCode2(e.target.value)}
-                    size="2"
-                    maxLength="2"
-                    style={{ imeMode: 'disabled' }}
-                    placeholder="사업자등록번호2"
-                  />
-                  -
-                  <input
-                    type="text"
-                    name="code3"
-                    value={code3}
-                    onChange={(e) => setCode3(e.target.value)}
-                    size="5"
-                    maxLength="5"
-                    style={{ imeMode: 'disabled' }}
-                    placeholder="사업자등록번호3"
-                  />
-                </div>
+                <input
+                  type="text"
+                  value={businessNumber}
+                  onChange={handleBusinessNumberChange}
+                  maxLength="12" // 10자리 숫자 + '-' 기호 두 개
+                  placeholder="사업자등록번호 (123-45-67890)"
+                />
                 <span
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer', marginLeft: '10px' }}
                   onClick={handleCodeCheck}
                 >
                   확인
                 </span>
+                {isVerified && (
+                  <span style={{ color: 'green', marginLeft: '10px' }}>✔</span>
+                )}
+              </td>
+            </tr>
+            <tr>
+              <td colSpan="2">
+                <p style={{ color: isVerified ? 'green' : 'red' }}>
+                  {verificationMessage}
+                </p>
               </td>
             </tr>
           </tbody>
@@ -103,12 +96,12 @@ const BusinessNumberCheck = () => {
         <div>
           <h3>사업자 정보</h3>
           <p>업종명: {businessInfo.tax_type}</p>
-          <p>대표자명: {businessInfo.b_no}</p> {/* 대표자명 필드는 API 응답에 없지만 예시로 추가 */}
-          <p>회사명: {businessInfo.b_stt}</p> {/* 회사명도 API 응답에 없지만 예시로 추가 */}
+          <p>사업자번호: {businessInfo.b_no}</p>
+          <p>상태: {businessInfo.b_stt}</p>
         </div>
       )}
     </div>
   );
 };
 
-export default BusinessNumberCheck;
+export default TestFile;

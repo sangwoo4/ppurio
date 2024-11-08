@@ -6,7 +6,9 @@ import Login from './pages/loginPage/Login'
 import Signup from './pages/loginPage/Signup'
 import Chatbot from './pages/chatbotPage/Chatbot'
 import Message from './pages/messagePage/Message'
-import CreateAI from './pages/createAiPage/CreateAI'
+import Code from './TEST_FILE/Code';
+import TestFile from './TEST_FILE/TestFile';
+import MaskImageEditor from './pages/createAiPage/CreateAI';
 
 function App() {
   return (
@@ -17,7 +19,10 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/chatbot" element={<Chatbot />} />
         <Route path="/send/message" element={<Message />} />
-        <Route path="/create/ai" element={<CreateAI />} />
+        <Route path="/create/ai" element={<MaskImageEditor />} />
+
+        <Route path="/test" element={<Code />} />
+        <Route path="/test2" element={<TestFile />} />
       </Routes>
     </div>
   );

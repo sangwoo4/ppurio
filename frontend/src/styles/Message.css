@@ -1,0 +1,83 @@
+.message-frame {
+  background-color: #c9d6ff;
+  background: #ccd6f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 90vh;
+}
+
+
+.messagePageForm {
+  background-color: #fff;
+  /* 폼 배경색 */
+  border: 1px solid #ccc;
+  /* 테두리 */
+  border-radius: 8px;
+  /* 모서리 둥글게 */
+  padding: 20px;
+  /* 폼 안쪽 여백 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* 그림자 효과 */
+  width: 100%;
+  max-width: 400px;
+  /* 최대 너비 */
+}
+
+.messageLabel {
+  display: block;
+  margin-bottom: 15px;
+  /* 라벨과 입력 필드 간의 여백 */
+  font-weight: bold;
+  /* 라벨 글씨 두껍게 */
+}
+
+.messagePhoneInput,
+.messageTextarea {
+  width: 100%;
+  /* 너비 100% */
+  padding: 10px;
+  /* 안쪽 여백 */
+  border: 1px solid #ccc;
+  /* 테두리 */
+  border-radius: 4px;
+  /* 모서리 둥글게 */
+  font-size: 16px;
+  /* 글꼴 크기 */
+  margin-top: 5px;
+  /* 입력 필드 위 여백 */
+  box-sizing: border-box;
+  /* 박스 크기 조정 */
+}
+
+.messageTextarea {
+  height: 100px;
+  /* 텍스트 영역 높이 */
+  resize: none;
+  /* 크기 조정 비활성화 */
+}
+
+.messageSubmit {
+  background-color: #007bff;
+  /* 버튼 배경색 */
+  color: white;
+  /* 버튼 글자색 */
+  border: none;
+  /* 테두리 없음 */
+  border-radius: 4px;
+  /* 모서리 둥글게 */
+  padding: 10px 15px;
+  /* 버튼 안쪽 여백 */
+  font-size: 16px;
+  /* 버튼 글꼴 크기 */
+  cursor: pointer;
+  /* 커서 포인터로 변경 */
+  transition: background-color 0.3s;
+  /* 배경색 변화 애니메이션 */
+}
+
+.messageSubmit:hover {
+  background-color: #0056b3;
+  /* 버튼 호버 시 배경색 변화 */
+}
