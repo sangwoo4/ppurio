@@ -6,14 +6,18 @@ import App from './App';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
+import { UserProvider } from './hooks/UserContext';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  // <React.StrictMode>
-  <BrowserRouter>
-    <Header />
-    <App />
-    <Footer />
-  </BrowserRouter>
-  // </React.StrictMode>
+  <UserProvider>
+    {/* <React.StrictMode> */}
+    <BrowserRouter>
+      <Header />
+      <App />
+      <Footer />
+    </BrowserRouter>
+    {/* </React.StrictMode> */}
+  </UserProvider>
 );
