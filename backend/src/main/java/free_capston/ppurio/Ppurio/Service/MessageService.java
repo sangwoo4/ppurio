@@ -51,7 +51,7 @@ public class MessageService {
         requestAiMessageDto.setText(generateMessageDto.getText());
         requestAiMessageDto.setField(user.getField());
         requestAiMessageDto.setMood(generateMessageDto.getMood());
-        requestAiMessageDto.setHashtag(generateMessageDto.getHashtag());
+        requestAiMessageDto.setKeyword(generateMessageDto.getKeyword());
         //requestAiMessageDto.setCategory(generateMessageDto.getCategory());
         return requestAiMessageDto;
     }

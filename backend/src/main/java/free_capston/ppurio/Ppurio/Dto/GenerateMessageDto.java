@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class GenerateMessageDto {
     private String text;
-    private List<String> hashtag;
+    private List<String> keyword;
     private String field;
     private  List<String> mood;
     private Long userId;
