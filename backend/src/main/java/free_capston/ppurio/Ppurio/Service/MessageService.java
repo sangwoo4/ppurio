@@ -52,7 +52,7 @@ public class MessageService {
         requestAiMessageDto.setField(user.getField());
         requestAiMessageDto.setMood(generateMessageDto.getMood());
         requestAiMessageDto.setHashtag(generateMessageDto.getHashtag());
-        requestAiMessageDto.setCategory(generateMessageDto.getCategory());
+        //requestAiMessageDto.setCategory(generateMessageDto.getCategory());
         return requestAiMessageDto;
     }
 }
