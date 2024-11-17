@@ -1,11 +1,11 @@
 package free_capston.ppurio.Ppurio;
 
-import free_capston.ppurio.Dto.*;
 import free_capston.ppurio.Ppurio.Dto.*;
 import free_capston.ppurio.Ppurio.Service.ImageService;
 import free_capston.ppurio.Ppurio.Service.MessageService;
 import free_capston.ppurio.Ppurio.Service.RequestService;
 import free_capston.ppurio.Ppurio.Service.SaveService;
+import free_capston.ppurio.Util.ResponseDto;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +26,6 @@ public class MessageController {
     public ResponseDto<?> sendMessage(@RequestBody SendMessageDto sendMessageDto) {
         List<String> newUrls = imageService.changeUrlAndUploadImages(sendMessageDto); //새로운 url을 생성 후 s3에 업로드
         SendMessageDto newSendMessageDto = imageService.updateFileUrls(sendMessageDto, newUrls); //변경된 url로 dto 수정
-        System.out.println("newSendMessageDto" + newSendMessageDto);
         requestService.requestSend(newSendMessageDto);
         saveService.saveMessageAndImage(newSendMessageDto);
 
@@ -40,8 +39,16 @@ public class MessageController {
     }
 
     @PostMapping("/generate/image")
-    public ResponseDto<?> generateTextAndMessage(@RequestBody GenerateMessageDto generateMessageDto){
-        ResponseAiTextAndMessageDto responseAiTextDto = messageService.generateAiTextAndMessage(generateMessageDto);
+    public ResponseDto<?> generateImage(@RequestBody GenerateMessageDto generateMessageDto){
+        ResponseAiImageDto responseAiTextDto = messageService.generateAiImage(generateMessageDto);
         return ResponseDto.setSuccessData("메세지, 이미지 생성 성공", responseAiTextDto);
     }
+
+    @PostMapping("/generate/textAndImage")
+    public ResponseDto<?> generateTextAndImage(@RequestBody GenerateMessageDto generateMessageDto){
+        ResponseAiTextAndMessageDto responseAiTextDto = messageService.generateAiTextAndImage(generateMessageDto);
+        return ResponseDto.setSuccessData("메세지, 이미지 생성 성공", responseAiTextDto);
+    }
+
+
 }

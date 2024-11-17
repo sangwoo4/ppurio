@@ -42,7 +42,7 @@ public class RequestService {
         try {
             String bearerAuthorization = String.format("%s %s", "Bearer", accessToken);
             Request request = new Request(baseUri + "/v1/message", bearerAuthorization);
-            System.out.println("Files in SendMessageDto: " + sendMessageDto.getFiles());
+
             // createSendTestParams를 호출하여 필요한 파라미터를 생성
             Map<String, Object> params = createSendTestParams(sendMessageDto);
 

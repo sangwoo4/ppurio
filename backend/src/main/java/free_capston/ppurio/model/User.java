@@ -23,7 +23,7 @@ public class User {
     @Column(nullable = false)
     private Integer businessNum;
 
-    @Column(nullable = false)
+    @Column(unique = true)
     private String email;
 
     @Column(nullable = false)
