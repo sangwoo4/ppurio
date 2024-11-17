@@ -1,14 +1,13 @@
-# image.py (ai/Image)
+    # image.py (ai/Image)
 import os
 import logging
-import requests
-import uuid
+from typing import List
 from fastapi import HTTPException
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
-from io import BytesIO
-from PIL import Image
-from ai.Utils.schemas import ImageCreateRequest, ImageCreateResponse, ImageEditRequest, ImageEditResponse
+
+from ai.Utils.schemas import ImageCreateRequest, ImageCreateResponse, ImageTextCreateResponse
+from ai.Utils.category_des import CATEGORY_DESCRIPTIONS_TEXT,CATEGORY_DESCRIPTIONS_IMAGE
 
 # .env 파일 로드
 load_dotenv()
@@ -28,22 +27,104 @@ def logger_setup():
 
 logger = logger_setup()
 
-# 이미지 저장 디렉토리 설정
-IMAGE_STORAGE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ImageStorage'))
+# 비동기 이미지 생성 및 텍스트 생성 함수
+async def generate_image_and_text(request: ImageCreateRequest) -> ImageTextCreateResponse:
+    try:
+        logger.info(f"요청받음 - 입력: {request.text}\n해시태그: {request.keyword}\n"
+                    f"업종명: {request.field}\n 분위기:{request.mood}\n"
+                    f"카테고리: {request.category}\n")
+        # 카테고리 설명 확장
+        category_description = CATEGORY_DESCRIPTIONS_TEXT.get(request.category, request.category)
+        logger.info(f"카테고리 설명: {category_description}")
 
-# 디렉토리가 없으면 생성
-if not os.path.exists(IMAGE_STORAGE_DIR):
-    os.makedirs(IMAGE_STORAGE_DIR)
+                # 카테고리 설명 확장
+        category_description = CATEGORY_DESCRIPTIONS_IMAGE.get(request.category, request.category)
+        logger.info(f"카테고리 설명: {category_description}")
+        
+        # Chat 형식 메시지 작성
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant for creating text messages"},
+            {"role": "user", "content": 
+             f"내용: {request.text}\n"
+             f"키워드: {', '.join(request.keyword or [])}\n"
+             "해당 키워드들 중 2개를 반드시 문자 메세지 본문에 단어로 포함해서 적절하게 생성해줘.\n"
+             f"업종명: {request.field}\n"
+             f"분위기: {', '.join(request.mood or [])}\n"
+             f"카테고리: {category_description}\n"
+             "전달 받은 업종명, 분위기, 그리고 카테고리에 따라 텍스트의 분위기를 설정해줘"
+             } 
+        ]
 
+        # 비동기 OpenAI 텍스트 생성 API 호출
+        text_response = await client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages,
+            max_tokens=1000,
+            temperature=0.5,
+            top_p=0.5,
+            frequency_penalty=0.5,
+            presence_penalty=0.5,
+        )
+
+        text = text_response.choices[0].message.content.strip()
+        logger.info(f"OpenAI로부터 받은 텍스트: {text}")
+
+        # prompt를 문자열로 변환
+        prompt = (
+            "You are a helpful assistant creating images for text messages"
+            f"내용: {request.text}\n"
+            "위 내용을 기준으로 전체적인 이미지의 큰 틀을 설정해서 생정해줘"
+            f"키워드: {', '.join(request.keyword or [])}\n"
+            "해당 키워드들 중 최대 2개를 이미지 안에 넣어서 생성해줘\n"
+            f"업종명: {request.field}\n"
+            f"분위기: {', '.join(request.mood or [])}\n"
+            f"카테고리: {category_description}\n"
+            "전달 받은 업종명, 분위기. 그리고 카테고리에 따라 이미지의 분위기를 설정해줘"
+        )
+
+        # 비동기 OpenAI 이미지 생성 API 호출
+        image_response = await client.images.generate (
+            model="dall-e-3",
+            prompt=prompt,
+            n=1,  # 생성할 이미지 수
+            size="1024x1024"
+        )
+
+        image_url = image_response.data[0].url
+        logger.info(f"OpenAI로부터 받은 이미지 URL: {image_url}")
+
+        # 변환된 이미지 파일 경로 및 생성된 텍스트 반환
+        return ImageTextCreateResponse(url=image_url, text=text)
+
+    except Exception as e:
+        logger.error(f"오류 발생: {e}")
+        raise HTTPException(status_code=500, detail="이미지 및 텍스트 생성 중 오류가 발생했습니다.")
+    
 # 비동기 이미지 생성 함수
 async def generate_image(request: ImageCreateRequest) -> ImageCreateResponse:
     try:
-        logger.info(f"요청받음 - 설명: {request.prompt}")
+        logger.info(f"요청받음 - {request}\n")
+
+        # 카테고리 설명 확장
+        category_description = CATEGORY_DESCRIPTIONS_IMAGE.get(request.category, request.category)
+        logger.info(f"카테고리 설명: {category_description}")
+        # prompt를 문자열로 변환
+        prompt = (
+            "You are a helpful assistant creating images for text messages"
+            f"내용: {request.text}\n"
+            "위 내용을 기준으로 전체적인 이미지의 큰 틀을 설정해서 생정해줘"
+            f"키워드: {', '.join(request.keyword or [])}\n"
+            "해당 키워드들 중 최대 2개를 이미지 안에 넣어서 생성해줘\n"
+            f"업종명: {request.field}\n"
+            f"분위기: {', '.join(request.mood or [])}\n"
+            f"카테고리: {category_description}\n"
+            "전달 받은 업종명, 분위기. 그리고 카테고리에 따라 이미지의 분위기를 설정해줘"
+        )
 
         # 비동기 OpenAI 이미지 생성 API 호출
         response = await client.images.generate(
             model="dall-e-3",
-            prompt=request.prompt,
+            prompt=prompt,
             n=1,  # 생성할 이미지 수
             size="1024x1024"
         )
@@ -51,89 +132,50 @@ async def generate_image(request: ImageCreateRequest) -> ImageCreateResponse:
         image_url = response.data[0].url
         logger.info(f"OpenAI로부터 받은 이미지 URL: {image_url}")
 
-        # 이미지 다운로드 및 JPG로 변환
-        image = download_image(image_url)
-        jpg_image_path = convert_image_to_jpg(image)
-
-        # 이미지 파일 이름 추출
-        image_filename = os.path.basename(jpg_image_path)
-
-        # 접근 가능한 URL 생성(AWS 미구현으로 임시로 localhost로 지정)
-        image_access_url = f"http://localhost:8000/images/{image_filename}"
-
         # 변환된 이미지 파일 경로 반환
-        return ImageCreateResponse(image_url=image_access_url)
+        return ImageCreateResponse(url=image_url)
 
     except Exception as e:
         logger.error(f"오류 발생: {e}")
         raise HTTPException(status_code=500, detail="이미지 생성 중 오류가 발생했습니다.")
 
-# 이미지 URL에서 이미지를 다운로드하는 함수
-def download_image(image_url):
-    response = requests.get(image_url)
-    if response.status_code != 200:
-        raise HTTPException(status_code=400, detail="이미지 다운로드 실패")
-    return Image.open(BytesIO(response.content))
-
-
-# 이미지를 JPG 형식으로 변환하고 저장하는 함수
-def convert_image_to_jpg(image):
-    if image.mode in ("RGBA", "LA"):
-        # RGBA 또는 LA 모드를 RGB 모드로 변환하여 배경을 하얗게 설정
-        background = Image.new("RGB", image.size, (255, 255, 255))
-        background.paste(image, mask=image.split()[3])  # 알파 채널을 마스크로 사용하여 붙여넣기
-    else:
-        background = image.convert("RGB")  # RGB 모드로 변환
-
-    # 이미지 파일 저장 경로 생성 (절대 경로 확인 및 출력)
-    image_filename = f"{uuid.uuid4()}.jpg"
-    image_path = os.path.join(IMAGE_STORAGE_DIR, image_filename)
-    image_path = os.path.abspath(image_path)  # 절대 경로로 변환하여 저장 위치 명확히 확인
-    logger.info(f"이미지 저장 경로: {image_path}")
-
-    # JPG 형식으로 변환 및 저장 (용량을 줄이기 위해 품질과 최적화 설정)
-    background.save(image_path, format="JPEG", quality=50, optimize=True)
-
-    return image_path
-
-# 이미지 편집 기능은 현재 미완성
-# DALL·E 2 API를 사용하여 이미지를 수정하는 함수
-async def edit_image_with_dalle(image, mask, description):
+    
+        # 비동기 이미지 생성 함수
+async def generate_new_image(request: ImageCreateRequest) -> ImageCreateResponse:
     try:
-        # PIL 이미지 객체를 PNG로 변환
-        png_image = convert_image_to_jpg(image)
-        png_mask = convert_image_to_jpg(mask)
-        
-        # DALL·E 2 API 호출
-        response = await client.images.edit(
-            image=png_image,   # PNG 형식의 이미지 전달
-            mask=png_mask,     # PNG 형식의 마스크 전달
-            prompt=description,  # 한국어로 자연어 설명
-            n=1,
+        logger.info(f"요청받음 - {request}\n")
+
+        # 카테고리 설명 확장
+        category_description = CATEGORY_DESCRIPTIONS_IMAGE.get(request.category, request.category)
+        logger.info(f"카테고리 설명: {category_description}")
+        # prompt를 문자열로 변환
+        prompt = (
+            "You are a helpful assistant creating images for text messages"
+            f"내용: {request.text}\n"
+            "위 내용을 기준으로 전체적인 이미지의 큰 틀을 설정해서 생정해줘"
+            f"키워드: {', '.join(request.keyword or [])}\n"
+            "해당 키워드들 중 최대 2개를 이미지 안에 넣어서 생성해줘\n"
+            f"업종명: {request.field}\n"
+            f"분위기: {', '.join(request.mood or [])}\n"
+            f"카테고리: {category_description}\n"
+            "전달 받은 업종명, 분위기. 그리고 카테고리에 따라 이미지의 분위기를 설정해줘"
+        )
+
+
+        # 비동기 OpenAI 이미지 생성 API 호출
+        response = await client.images.generate(
+            model="dall-e-3",
+            prompt=prompt,
+            n=1,  # 생성할 이미지 수
             size="1024x1024"
         )
 
-        # 수정된 이미지 URL 반환
-        return response.data[0].url
-    except Exception as e:
-        logger.error(f"DALL·E 2 처리 중 오류 발생: {e}")
-        raise HTTPException(status_code=500, detail="DALL·E 2 이미지 편집 실패")
+        image_url = response.data[0].url
+        logger.info(f"OpenAI로부터 받은 이미지 URL: {image_url}")
 
-# POST 요청을 처리하는 엔드포인트
-async def modify_image(request: ImageEditRequest):
-    try:
-        logger.info(f"요청 받음 - 이미지 URL: {request.url}, 마스크 URL: {request.mask_url}, 설명: {request.description}")
-
-        # 1단계: URL로부터 이미지를 다운로드
-        image = download_image(request.url)
-        mask = download_image(request.mask_url)  # 마스크 이미지 다운로드
-
-        # 2단계: DALL·E 2를 사용하여 이미지 수정 (description에 따라)
-        modified_image_url = await edit_image_with_dalle(image, mask, request.description)
-
-        # 3단계: 수정된 이미지의 URL 반환
-        return ImageEditResponse(modified_image_url=modified_image_url)
+        # 변환된 이미지 파일 경로 반환
+        return ImageCreateResponse(url=image_url)
 
     except Exception as e:
         logger.error(f"오류 발생: {e}")
-        raise HTTPException(status_code=500, detail="이미지 변형 실패")
+        raise HTTPException(status_code=500, detail="이미지 생성 중 오류가 발생했습니다.")
