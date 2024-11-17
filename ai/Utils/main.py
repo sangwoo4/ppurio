@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from Text.text import generate_text, TextRequest, TextResponse
 from Image.image import generate_image_and_text, ImageCreateRequest
 from Image.image import generate_image, ImageCreateRequest
+from Image.image import generate_new_image, ImageCreateRequest
 
 app = FastAPI()
 
@@ -21,6 +22,11 @@ async def generate_image_text_endpoint(request: ImageCreateRequest):
 @app.post("/image")
 async def generate_image_endpoint(request: ImageCreateRequest):
     response = await generate_image(request)
+    return response
+
+@app.post("/new/image")
+async def generate_image_endpoint(request: ImageCreateRequest):
+    response = await generate_new_image(request)
     return response
 
 if __name__ == "__main__":
