@@ -7,7 +7,7 @@ from openai import AsyncOpenAI
 from dotenv import load_dotenv
 
 from Utils.schemas import TextRequest, TextResponse
-
+from Utils.category_des import CATEGORY_DESCRIPTIONS_TEXT
 
 # .env 파일 로드
 load_dotenv()
@@ -27,19 +27,25 @@ logger = logger_setup()
 
 async def generate_text(request: TextRequest) -> TextResponse:
     try:
-        logger.info(f"요청받음 - 입력: {request.text}\n해시태그: {request.hashtag}\n"
-                    f"업종명: {request.field}\n 분위기:{request.mood}\n")
+        logger.info(f"요청받음 - 입력: {request.text}\키워드: {request.keyword}\n"
+                    f"업종명: {request.field}\n 분위기:{request.mood}\n"
+                    f"카테고리: {request.category}\n")
+
+        # 카테고리 설명 확장
+        category_description = CATEGORY_DESCRIPTIONS_TEXT.get(request.category, request.category)
+        logger.info(f"카테고리 설명: {category_description}")
 
         # Chat 형식 메시지 작성
         messages = [
             {"role": "system", "content": "You are a helpful assistant for creating text messages"},
             {"role": "user", "content": 
              f"내용: {request.text}\n"
-             f"해시태그: {', '.join(request.hashtag or [])}\n"
-            "해당 해시태그를 반드시 문자 메세지 본문에 단어로 포함해서 적절하게 생성해줘.\n"
+             f"키워드: {', '.join(request.keyword or [])}\n"
+             "해당 키워드들 중 2개를 반드시 문자 메세지 본문에 단어로 포함해서 적절하게 생성해줘.\n"
              f"업종명: {request.field}\n"
              f"분위기: {', '.join(request.mood or [])}\n"
-            "전달 받은 업종명과 분위기에 따라 텍스트의 분위기를 설정해줘"
+             f"카테고리: {category_description}\n"
+             "전달 받은 업종명, 분위기, 그리고 카테고리에 따라 텍스트의 분위기를 설정해줘"
              } 
         ]
         # OpenAI Chat API 요청
