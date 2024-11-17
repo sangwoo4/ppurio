@@ -9,6 +9,6 @@ public class RequestAiMessageDto {
     private String text;
     private List<String> keyword;
     private String field;
-    //private String category;
+    private String category;
     private  List<String> mood;
 }
