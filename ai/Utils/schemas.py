@@ -5,7 +5,8 @@ from typing import List, Optional
 class TextRequest(BaseModel):
     text: str
     field: str
-    hashtag: Optional[List[str]] = None
+    category: Optional [str] = None
+    keyword: Optional[List[str]] = None
     mood: Optional[List[str]] = None
 
 class TextResponse(BaseModel):
@@ -14,7 +15,8 @@ class TextResponse(BaseModel):
 class ImageCreateRequest(BaseModel):
     text: str
     field: str
-    hashtag: Optional[List[str]] = None
+    category: Optional [str] = None
+    keyword: Optional[List[str]] = None
     mood: Optional[List[str]] = None
 
 class ImageTextCreateResponse(BaseModel):
