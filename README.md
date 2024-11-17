@@ -23,3 +23,7 @@
 - docker build, run
   ```bash
     docker compose up --build
+-----------
+update log
+11/18
+ - category 추가
