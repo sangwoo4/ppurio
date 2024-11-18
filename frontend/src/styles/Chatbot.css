@@ -220,6 +220,8 @@
 }
 
 
+
+
 .chatbot-page {
   display: flex;
   align-items: flex-start;
@@ -308,7 +310,6 @@
 }
 
 
-
 .tone-selection {
   display: flex;
   gap: 8px;
@@ -326,4 +327,38 @@
 
 .tone-selection button:hover {
   background-color: #512da8;
+}
+
+.generated-image {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+
+.category-selection button,
+.skip-button {
+  padding: 5px;
+  margin: 5px;
+  font-size: 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #5c6bc0;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* 버튼 호버 효과 */
+.category-selection button,
+.skip-button:hover {
+  background-color: #512da8;
+}
+
+/* 버튼 컨테이너 중앙 정렬 */
+.category-selection,
+.skip-button {
+  justify-content: center;
 }
