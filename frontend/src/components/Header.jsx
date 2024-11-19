@@ -36,7 +36,7 @@ const Header = () => {
         <Link className="nav-link" to="/"><IoHome className="icon" />홈</Link>
         <Link className="nav-link" to="/chatbot"><TbMessageChatbot className="icon" />챗봇</Link>
         <Link className="nav-link" to="/send/message"><TbMessageCirclePlus className="icon" />메세지 전송</Link>
-        <Link className="nav-link" to="/create/ai"><GiPerspectiveDiceSixFacesRandom className="icon" />이미지 편집</Link>
+        <Link className="nav-link" to="/edit/product"><GiPerspectiveDiceSixFacesRandom className="icon" />이미지 편집</Link>
 
         {userId ? (
           <button className="nav-link" onClick={handleLogout}>

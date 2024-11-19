@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import '../../styles/Login.css';
 import { useUser } from '../../hooks/UserContext';
+import API_BASE_URL from "../../URL_API";
 
 function Login() {
   const { setUserId } = useUser();
@@ -125,7 +126,7 @@ function Login() {
 
   // 로그인 api 통신
   const onClickLoginButton = () => {
-    fetch(`http://localhost:8080/login`, {
+    fetch(`${API_BASE_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -168,7 +169,7 @@ function Login() {
 
     console.log("전송할 데이터:", requestData);
 
-    fetch(`http://localhost:8080/signup`, {
+    fetch(`${API_BASE_URL}/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json;"

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Chatbot.css";
+import API_BASE_URL from "../../URL_API";
 
 const Chatbot = () => {
   const steps = 6; // 단계 수 변경
@@ -167,8 +168,8 @@ const Chatbot = () => {
 
     const apiUrl =
       chatMode === "image"
-        ? "http://localhost:8080/message/generate/image"
-        : "http://localhost:8080/message/generate/text";
+        ? `${API_BASE_URL}/message/generate/image`
+        : `${API_BASE_URL}/message/generate/text`;
 
     console.log("전송할 메시지:", data);
 
@@ -183,6 +184,8 @@ const Chatbot = () => {
 
       if (response.ok) {
         const result = await response.json();
+        console.log("응답 결과:", result); // 응답 결과 콘솔에 출력
+
         if (chatMode === "image") {
           // 이미지 생성 결과 처리
           setMessages((prevMessages) => [
@@ -207,12 +210,14 @@ const Chatbot = () => {
         throw new Error("서버 응답 에러");
       }
     } catch (error) {
+      console.log("에러 발생:", error); // 에러 메시지 출력
       setMessages((prevMessages) => [
         ...prevMessages,
         { text: `에러 발생: ${error.message}`, isBot: true },
       ]);
     }
   };
+
 
   return (
     <div className="chatbot-page">
@@ -223,7 +228,12 @@ const Chatbot = () => {
               {msg.text && msg.text.startsWith("http") ? (
                 <img src={msg.text} className="generated-image" alt="Generated" />
               ) : (
-                msg.text || "내용이 없습니다."
+                <div
+                  className="message-text"
+                  dangerouslySetInnerHTML={{
+                    __html: msg.text?.replace(/\n/g, "<br>") || "내용이 없습니다.",
+                  }}
+                ></div>
               )}
             </div>
           ))}
@@ -318,8 +328,10 @@ export default Chatbot;
 
 
 
+
 // import React, { useState, useEffect } from "react";
 // import "../../styles/Chatbot.css";
+// import API_BASE_URL from "../../URL_API";
 
 // const Chatbot = () => {
 //   const steps = 6; // 단계 수 변경
@@ -395,6 +407,15 @@ export default Chatbot;
 //         ]);
 //         setInputValue(""); // 입력 필드 초기화
 //         setCurrentStep(4); // 어조 선택 단계로 이동
+//       } else if (currentStep === 4) {
+//         setMood([inputValue]); // 사용자가 입력한 어조 저장
+//         setMessages((prevMessages) => [
+//           ...prevMessages,
+//           { text: `입력한 어조: ${inputValue}`, isBot: false },
+//           { text: "모든 입력이 완료되었습니다. 생성 중입니다...", isBot: true },
+//         ]);
+//         setCurrentStep(5); // 생성 완료 단계로 이동
+//         handleGenerateMessage(); // API 호출
 //       }
 //     }
 //   };
@@ -436,23 +457,10 @@ export default Chatbot;
 //     setMessages((prevMessages) => [
 //       ...prevMessages,
 //       { text: `선택한 어조: ${tone}`, isBot: false },
-//       { text: "모든 입력이 완료되었습니다. 생성 중입니다...", isBot: true }, // 생성 요청 알림 추가
+//       { text: "모든 입력이 완료되었습니다. 생성 중입니다...", isBot: true },
 //     ]);
 //     setCurrentStep(5); // 생성 완료 단계로 이동
 //     handleGenerateMessage(); // API 호출
-//   };
-
-//   const handleToneInput = () => {
-//     if (inputValue.trim()) {
-//       setMood([inputValue]); // 사용자가 입력한 어조 저장
-//       setMessages((prevMessages) => [
-//         ...prevMessages,
-//         { text: `입력한 어조: ${inputValue}`, isBot: false },
-//         { text: "모든 입력이 완료되었습니다. 생성 중입니다...", isBot: true },
-//       ]);
-//       setCurrentStep(5); // 생성 완료 단계로 이동
-//       handleGenerateMessage(); // API 호출
-//     }
 //   };
 
 //   useEffect(() => {
@@ -491,8 +499,8 @@ export default Chatbot;
 
 //     const apiUrl =
 //       chatMode === "image"
-//         ? "http://localhost:8080/message/generate/image"
-//         : "http://localhost:8080/message/generate/text";
+//         ? `${API_BASE_URL}/message/generate/image`
+//         : `${API_BASE_URL}/message/generate/text`;
 
 //     console.log("전송할 메시지:", data);
 
@@ -507,6 +515,8 @@ export default Chatbot;
 
 //       if (response.ok) {
 //         const result = await response.json();
+//         console.log("응답 결과:", result); // 응답 결과 콘솔에 출력
+
 //         if (chatMode === "image") {
 //           // 이미지 생성 결과 처리
 //           setMessages((prevMessages) => [
@@ -531,12 +541,14 @@ export default Chatbot;
 //         throw new Error("서버 응답 에러");
 //       }
 //     } catch (error) {
+//       console.log("에러 발생:", error); // 에러 메시지 출력
 //       setMessages((prevMessages) => [
 //         ...prevMessages,
 //         { text: `에러 발생: ${error.message}`, isBot: true },
 //       ]);
 //     }
 //   };
+
 
 //   return (
 //     <div className="chatbot-page">
@@ -547,7 +559,12 @@ export default Chatbot;
 //               {msg.text && msg.text.startsWith("http") ? (
 //                 <img src={msg.text} className="generated-image" alt="Generated" />
 //               ) : (
-//                 msg.text || "내용이 없습니다."
+//                 <div
+//                   className="message-text"
+//                   dangerouslySetInnerHTML={{
+//                     __html: msg.text?.replace(/\n/g, "<br>") || "내용이 없습니다.",
+//                   }}
+//                 ></div>
 //               )}
 //             </div>
 //           ))}
@@ -638,3 +655,4 @@ export default Chatbot;
 // };
 
 // export default Chatbot;
+
