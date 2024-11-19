@@ -1,102 +1,152 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Button, Form } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { PinturaEditor } from '@pqina/react-pintura';
+import '@pqina/pintura/pintura.css';
 import '../../styles/EditProduct.css';
-import API_BASE_URL from '../../URL_API'; // aws 서버
+import daouName from "../../assets/daoutechName.jpeg";
 
-const SendMessage = () => {
-  return (
-    <div className="d-grid gap-2 mt-4">
-      <Button variant="primary" size="lg">
-        메시지 전송(이미지 포함)
-      </Button>
-    </div>
-  );
+import {
+  createDefaultImageReader,
+  createDefaultImageWriter,
+  createDefaultShapePreprocessor,
+  setPlugins,
+  plugin_crop,
+  plugin_finetune,
+  plugin_filter,
+  plugin_annotate,
+  plugin_finetune_defaults,
+  plugin_filter_defaults,
+  markup_editor_defaults,
+} from '@pqina/pintura';
+
+import {
+  LocaleCore,
+  LocaleCrop,
+  LocaleFinetune,
+  LocaleFilter,
+  LocaleAnnotate,
+  LocaleMarkupEditor,
+} from '@pqina/pintura/locale/en_GB';
+
+// 플러그인 설정
+setPlugins(plugin_crop, plugin_finetune, plugin_filter, plugin_annotate);
+
+const editorDefaults = {
+  utils: ['crop', 'finetune', 'filter', 'annotate'],
+  imageReader: createDefaultImageReader(),
+  imageWriter: createDefaultImageWriter(),
+  shapePreprocessor: createDefaultShapePreprocessor(),
+  ...plugin_finetune_defaults,
+  ...plugin_filter_defaults,
+  ...markup_editor_defaults,
+  locale: {
+    ...LocaleCore,
+    ...LocaleCrop,
+    ...LocaleFinetune,
+    ...LocaleFilter,
+    ...LocaleAnnotate,
+    ...LocaleMarkupEditor,
+  },
 };
 
+
 const EditProduct = () => {
-  const [aiText, setAiText] = useState(''); // AI 텍스트 생성
-  const [generatedText, setGeneratedText] = useState(''); // AI 텍스트
-  const [imageDescription, setImageDescription] = useState(''); // 이미지 생성
-  const [generatedImage, setGeneratedImage] = useState(''); // AI 이미지 생성
+  const [imageSrc, setImageSrc] = useState(); // 디폴트 이미지 설정
+  const [results, setResults] = useState([]); // 복수의 이미지 저장
+  const [popupImage, setPopupImage] = useState(null); // 팝업으로 띄울 이미지 설정
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImageSrc(URL.createObjectURL(file)); // 업로드한 파일을 이미지 소스로 설정
+    }
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file) {
+      setImageSrc(URL.createObjectURL(file)); // 드래그 앤 드롭한 파일을 이미지 소스로 설정
+    }
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+
+  const handleDeleteImage = (index) => {
+    setResults(results.filter((_, i) => i !== index)); // 특정 인덱스의 이미지를 삭제
+  };
+
+  const openPopup = (image) => {
+    setPopupImage(image); // 클릭한 이미지 팝업에 설정
+  };
+
+  const closePopup = () => {
+    setPopupImage(null); // 팝업 닫기
+  };
+
+  const handleSendMessage = () => {
+    console.log('메시지가 전송되었습니다!');
+  };
 
   return (
-    <Container fluid className="p-3">
-      <Row>
-        {/* Left Side */}
-        <Col md={6} className="bg-light p-4">
-          <h2>왼쪽 영역</h2>
+    <div className="create-ai-page">
+      <div
+        className="drop-zone"
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+      >
+        <p>이미지를 여기로 드래그 앤 드롭하거나, 파일을 선택하세요.</p>
+        <label className="file-label">
+          <input type="file" onChange={handleFileChange} />
+          <span className="file-button">파일 선택</span>
+        </label>
+      </div>
 
-          {/* 입력 필드 */}
-          <Form>
-            <Form.Group className="mb-3" controlId="aiText">
-              <Form.Label>AI 텍스트 생성</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="AI 텍스트를 입력하세요"
-                value={aiText}
-                onChange={(e) => setAiText(e.target.value)}
-              />
-            </Form.Group>
+      {imageSrc && (
+        <div className="pintura-editor-container">
+          <PinturaEditor
+            {...editorDefaults}
+            src={daouName} // 디폴트 이미지 경로
+            onLoad={(res) => console.log('Image loaded:', res)}
+            onProcess={({ dest }) => setResults([...results, URL.createObjectURL(dest)])} // 편집 완료 후 결과 이미지 배열에 추가
+          />
+        </div>
+      )}
 
-            <Form.Group className="mb-3" controlId="generatedText">
-              <Form.Label>AI 텍스트</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                placeholder="AI가 생성한 텍스트가 여기에 표시됩니다"
-                value={generatedText}
-                onChange={(e) => setGeneratedText(e.target.value)}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="imageDescription">
-              <Form.Label>이미지 생성</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="생성할 이미지 설명을 입력하세요"
-                value={imageDescription}
-                onChange={(e) => setImageDescription(e.target.value)}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="generatedImage">
-              <Form.Label>AI 이미지 생성</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                placeholder="AI가 생성한 이미지가 여기에 표시됩니다"
-                value={generatedImage}
-                onChange={(e) => setGeneratedImage(e.target.value)}
-              />
-            </Form.Group>
-          </Form>
-
-          {/* SendMessage 버튼 추가 */}
-          <SendMessage />
-        </Col>
-
-        {/* Right Side: 미리보기 영역 */}
-        <Col md={6} className="d-flex justify-content-center align-items-center">
-          <div className="phone-preview bg-secondary text-white p-3">
-            <h5 className="text-center">미리보기</h5>
-            <div className="preview-content mt-4">
-              <h6>AI 텍스트 생성</h6>
-              <p>{aiText || 'AI 텍스트가 여기에 표시됩니다.'}</p>
-
-              <h6>AI 텍스트</h6>
-              <p>{generatedText || 'AI가 생성한 텍스트가 여기에 표시됩니다.'}</p>
-
-              <h6>이미지 생성</h6>
-              <p>{imageDescription || '생성할 이미지 설명이 여기에 표시됩니다.'}</p>
-
-              <h6>AI 이미지 생성</h6>
-              <p>{generatedImage || 'AI가 생성한 이미지 설명이 여기에 표시됩니다.'}</p>
+      <div className="result-images-container">
+        <div className="result-images-header">
+          <span role="img" aria-label="saved-images">📌</span> 이미지 저장 내역
+          <span className="done-hint">
+            이미지를 편집한 후 <strong>Done</strong> 버튼을 눌러 저장하세요!
+          </span>
+        </div>
+        {results.length === 0 && <p>저장된 이미지가 없습니다.</p>}
+        <div className="result-images-list">
+          {results.map((result, index) => (
+            <div key={index} className="result-image">
+              <button className="delete-button" onClick={() => handleDeleteImage(index)}>✖</button>
+              <img src={result} alt={`Edited result ${index + 1}`} onClick={() => openPopup(result)} />
             </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 메시지 전송 버튼 */}
+      <button className="send-message-button" onClick={handleSendMessage}>
+        메시지 전송
+      </button>
+
+      {/* 팝업창 */}
+      {popupImage && (
+        <div className="popup-overlay" onClick={closePopup}>
+          <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+            <button className="popup-close-button" onClick={closePopup}>✖</button>
+            <img src={popupImage} alt="Full view" />
           </div>
-        </Col>
-      </Row>
-    </Container>
+        </div>
+      )}
+    </div>
   );
 };
 

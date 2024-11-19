@@ -1,6 +1,10 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Montserrat', sans-serif;
+.app {
+  padding-top: 60px;
+  /* Header 높이만큼 패딩 추가 */
+  padding-bottom: 40px;
+  /* Footer 높이만큼 패딩 추가 */
+}
+
+.content {
+  padding: 20px;
 }

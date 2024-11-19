@@ -77,7 +77,7 @@ const Chatbot = () => {
         setInputValue(""); // 입력 필드 초기화
         setCurrentStep(4); // 어조 선택 단계로 이동
       } else if (currentStep === 4) {
-        setMood([inputValue]); // 사용자가 입력한 어조 저장
+        setMood([inputValue]); // 직접 입력한 어조 저장
         setMessages((prevMessages) => [
           ...prevMessages,
           { text: `입력한 어조: ${inputValue}`, isBot: false },
@@ -120,12 +120,12 @@ const Chatbot = () => {
     }
   };
 
-  const handleToneSelect = (tone) => {
-    setSelectedTone(tone);
-    setMood([tone]); // 선택된 어조를 배열로 저장
+  const handleToneSelect = (moodValue) => {
+    setSelectedTone(moodValue); // UI용 상태
+    setMood([moodValue]); // 서버 전송용 상태
     setMessages((prevMessages) => [
       ...prevMessages,
-      { text: `선택한 어조: ${tone}`, isBot: false },
+      { text: `선택한 어조: ${moodValue}`, isBot: false },
       { text: "모든 입력이 완료되었습니다. 생성 중입니다...", isBot: true },
     ]);
     setCurrentStep(5); // 생성 완료 단계로 이동
@@ -152,10 +152,10 @@ const Chatbot = () => {
     setCurrentStep(2); // 내용 입력 단계로 이동
   };
 
-  useEffect(() => {
-    if (currentStep === 5 && (mood || keywords)) {
-    }
-  }, [mood]);
+  // useEffect(() => {
+  //   if (currentStep === 5 && (mood || keywords)) {
+  //   }
+  // }, [mood]);
 
   const handleGenerateMessage = async () => {
     const data = {
@@ -163,7 +163,7 @@ const Chatbot = () => {
       text,
       mood,
       keyword: keywords,
-      category, // 생성 목적 추가
+      category,
     };
 
     const apiUrl =
