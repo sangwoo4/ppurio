@@ -15,12 +15,14 @@ const Chatbot = () => {
   const [selectedTone, setSelectedTone] = useState(null);
   const [keyword, setKeyword] = useState([]);
   const [userId, setUserId] = useState(null);
-  const [text, setText] = useState("");
+  const [userText, setUserText] = useState("");
   const [mood, setMood] = useState([]);
   const [imageUrl, setImageUrl] = useState('');
   const [category, setCategory] = useState(null);
   const [resultData, setResultData] = useState(null); // 결과 데이터를 저장하는 상태
 
+  const [resultText, setResultText] = useState(null);
+  const [resultCategory, setResultCategory] = useState(null);
   const [resultImgData, setResultImgData] = useState(null); // 이미지 결과 데이터를 저장하는 상태
   const [resultTxtData, setResultTxtData] = useState(null); // 텍스트 결과 데이터를 저장하는 상태
 
@@ -72,7 +74,7 @@ const Chatbot = () => {
       ]);
       setInputValue(""); // 입력 필드 초기화
       if (currentStep === 2) {
-        setText(inputValue); // 'text' 데이터 저장
+        setUserText(inputValue); // 'text' 데이터 저장
         handleNextMessage();
       } else if (currentStep === 3) {
         const tags = inputValue.split(" ").slice(0, 3); // 최대 3개 추출
@@ -169,7 +171,7 @@ const Chatbot = () => {
   const handleGenerateMessage = async () => {
     const data = {
       userId,
-      text,
+      text: userText,
       mood: mood,
       keyword: keyword,
       category,
@@ -195,6 +197,8 @@ const Chatbot = () => {
         const result = await response.json();
         // setResultData(result.data); // 결과 데이터 저장
         console.log("응답 결과:", result); // 응답 결과 콘솔에 출력
+        setResultText(data.text);
+        setResultCategory(data.category);
 
         if (chatMode === "image") {
           // 이미지 생성 결과 처리
@@ -237,8 +241,9 @@ const Chatbot = () => {
   };
 
   const handleSendMessageDirect = () => {
+
     if (resultImgData || resultTxtData) {
-      navigate('/send/message', { state: { imageSrc: resultImgData, text: resultTxtData } }); // 텍스트와 이미지 결과를 모두 전달
+      navigate('/send/message', { state: { imageSrc: resultImgData, text: resultTxtData, userText: resultText, category: resultCategory } }); // 텍스트와 이미지 결과를 모두 전달
     }
   };
 

@@ -11,22 +11,39 @@ const Message = () => {
   const location = useLocation();
   const [message, setMessage] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [userText, setUserText] = useState(null);
+  const [category, setCategory] = useState(null);
   const [image, setImage] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [receiverName, setReceiverName] = useState(""); // 받는 사람 이름 상태
 
   const [imageSrc, setImageSrc] = useState(null); // 이미지 상태
   const [text, setText] = useState(null); // 텍스트 상태
+
+  // 로컬스토리지에서 userId 가져오기
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUserId(storedUserId);
+    }
+  }, []);
 
   useEffect(() => {
     if (location.state) {
       // 전달받은 데이터에서 이미지 URL만 추출하여 상태에 설정
       setImageSrc(location.state.imageSrc ? location.state.imageSrc.url : null);
       setText(location.state.text); // Ensure location.state.text is an object with a 'text' property
+      setUserText(location.state.userText);  // 전달받은 userText 설정
+      setCategory(location.state.category);  // 전달받은 category 설정
     }
   }, [location.state]);
 
+  console.log("Chatbot에서 전달받은 유저텍스트:", userText);
+  console.log("Chatbot에서 전달받은 카테고리:", category);
   console.log("Chatbot에서 전달받은 이미지:", imageSrc); // 이미지 확인
   console.log("Chatbot에서 전달받은 텍스트:", text); // 텍스트 확인
 
+  const handleReceiverNameChange = (e) => setReceiverName(e.target.value); // 받는 사람 이름 입력 처리
   const handleMessageChange = (e) => setMessage(e.target.value);
   const handlePhoneNumberChange = (e) => setPhoneNumber(e.target.value);
   const handleImageChange = (e) => {
@@ -41,18 +58,49 @@ const Message = () => {
   const handleSendMessage = async () => {
     if (!message.trim()) return;
 
-    const apiUrl = `${API_BASE_URL}/message/send`;
+    // messageType 설정 (이미지 유무에 따라 MMS 또는 SMS)
+    const messageType = imageSrc ? "MMS" : "SMS";
+
+    // targetCount는 targets 배열의 길이로 설정
+    const targets = [
+      {
+        to: phoneNumber,
+        name: receiverName
+      }
+    ];
+    const targetCount = targets.length;
+
+    const files = imageSrc
+      ? [
+        {
+          fileUrl: imageSrc, // imageSrc를 fileUrl로 설정
+        },
+      ]
+      : null; // files가 없다면 null로 설정
+
     const data = {
-      phone: phoneNumber,
-      message: message,
+      account: "hansung06",
+      messageType,
+      content: message,
+      targetCount,
+      category,
+      prompt: userText,
+      targets,
+      userId,
     };
 
+    // files가 있을 경우에만 data 객체에 files를 추가
+    if (files) {
+      data.files = files;
+    }
+
+    console.log("전송할 데이터:", data); // data 객체 로그
+
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch(`${API_BASE_URL}/message/send`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer YOUR_ACCESS_TOKEN",
         },
         body: JSON.stringify(data),
       });
@@ -60,15 +108,16 @@ const Message = () => {
       if (response.ok) {
         const result = await response.json();
         console.log("메시지 전송 성공:", result);
-        setMessage("");
-        setImageSrc(null);
       } else {
-        console.error("메시지 전송 실패:", await response.json());
+        const errorResponse = await response.json();
+        console.error("메시지 전송 실패:", errorResponse);
       }
     } catch (error) {
       console.error("에러 발생:", error);
     }
   };
+
+
 
   return (
     <div className="message-container">
@@ -78,6 +127,15 @@ const Message = () => {
         <div className="col-left bg-light p-4">
           <h2>메시지 전송</h2>
           <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>받는 사람 이름</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="받는 사람 이름을 입력하세요"
+                value={receiverName}
+                onChange={handleReceiverNameChange} // 받는 사람 이름 입력 처리
+              />
+            </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>받는 사람 전화번호</Form.Label>
               <Form.Control
@@ -108,7 +166,7 @@ const Message = () => {
             </div>
             <Button
               variant="primary"
-              onClick={handleSendMessage}
+              onClick={handleSendMessage} // 클릭 시 호출될 함수
               className="w-100 mt-3"
             >
               메시지 전송
