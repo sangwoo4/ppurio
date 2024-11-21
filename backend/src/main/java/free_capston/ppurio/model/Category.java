@@ -20,6 +20,9 @@ public class Category {
     @Column
     private String category;
 
+    public Category(String category) {
+        this.category = category;
+    }
 //    @Column(columnDefinition = "TEXT", name = "prompt")
 //    private String prompt;
 }
