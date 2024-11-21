@@ -27,7 +27,6 @@ import {
   LocaleMarkupEditor,
 } from '@pqina/pintura/locale/en_GB';
 
-// 플러그인 설정
 setPlugins(plugin_crop, plugin_finetune, plugin_filter, plugin_annotate);
 
 const editorDefaults = {
@@ -48,30 +47,10 @@ const editorDefaults = {
   },
 };
 
-
 const EditProduct = () => {
-  const [imageSrc, setImageSrc] = useState(); // 디폴트 이미지 설정
-  const [results, setResults] = useState([]); // 복수의 이미지 저장
-  const [popupImage, setPopupImage] = useState(null); // 팝업으로 띄울 이미지 설정
-
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setImageSrc(URL.createObjectURL(file)); // 업로드한 파일을 이미지 소스로 설정
-    }
-  };
-
-  const handleDrop = (event) => {
-    event.preventDefault();
-    const file = event.dataTransfer.files[0];
-    if (file) {
-      setImageSrc(URL.createObjectURL(file)); // 드래그 앤 드롭한 파일을 이미지 소스로 설정
-    }
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
-  };
+  const [imageSrc] = useState(daouName); // 디폴트 이미지 설정
+  const [results, setResults] = useState([]);
+  const [popupImage, setPopupImage] = useState(null);
 
   const handleDeleteImage = (index) => {
     setResults(results.filter((_, i) => i !== index)); // 특정 인덱스의 이미지를 삭제
@@ -91,25 +70,13 @@ const EditProduct = () => {
 
   return (
     <div className="create-ai-page">
-      <div
-        className="drop-zone"
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-      >
-        <p>이미지를 여기로 드래그 앤 드롭하거나, 파일을 선택하세요.</p>
-        <label className="file-label">
-          <input type="file" onChange={handleFileChange} />
-          <span className="file-button">파일 선택</span>
-        </label>
-      </div>
-
       {imageSrc && (
         <div className="pintura-editor-container">
           <PinturaEditor
             {...editorDefaults}
-            src={daouName} // 디폴트 이미지 경로
+            src={imageSrc} // imageSrc 사용
             onLoad={(res) => console.log('Image loaded:', res)}
-            onProcess={({ dest }) => setResults([...results, URL.createObjectURL(dest)])} // 편집 완료 후 결과 이미지 배열에 추가
+            onProcess={({ dest }) => setResults([...results, URL.createObjectURL(dest)])}
           />
         </div>
       )}
@@ -132,12 +99,10 @@ const EditProduct = () => {
         </div>
       </div>
 
-      {/* 메시지 전송 버튼 */}
       <button className="send-message-button" onClick={handleSendMessage}>
         메시지 전송
       </button>
 
-      {/* 팝업창 */}
       {popupImage && (
         <div className="popup-overlay" onClick={closePopup}>
           <div className="popup-content" onClick={(e) => e.stopPropagation()}>

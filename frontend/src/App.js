@@ -1,5 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import React from "react";
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import MainHome from './pages/mainpage/MainHome';
 import Login from './pages/loginPage/Login'
@@ -9,7 +11,7 @@ import EditProduct from './pages/editProduct/EditProduct';
 
 function App() {
   return (
-    <div>
+    <div id='wrapper'>
       <Routes>
         <Route path="/" element={<MainHome />} />
         <Route path="/login" element={<Login />} />

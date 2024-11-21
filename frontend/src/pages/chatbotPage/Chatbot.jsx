@@ -120,18 +120,24 @@ const Chatbot = () => {
     }
   };
 
-  const handleToneSelect = (moodValue) => {
-    setSelectedTone(moodValue); // UI용 상태
-    setMood([moodValue]); // 서버 전송용 상태
+  // mood가 변경될 때마다 handleGenerateMessage 호출
+  useEffect(() => {
+    if (mood && mood.length > 0) {
+      handleGenerateMessage();
+    }
+  }, [mood]); // mood가 변경될 때마다 실행
+
+  // mood가 선택되었을 때 상태 업데이트
+  const handleToneSelect = (mood) => {
+    setSelectedTone(mood);
+    setMood([mood]); // mood 선택 시 상태 업데이트
     setMessages((prevMessages) => [
       ...prevMessages,
-      { text: `선택한 어조: ${moodValue}`, isBot: false },
+      { text: `선택한 어조: ${mood}`, isBot: false },
       { text: "모든 입력이 완료되었습니다. 생성 중입니다...", isBot: true },
     ]);
-    setCurrentStep(5); // 생성 완료 단계로 이동
-    handleGenerateMessage(); // API 호출
+    setCurrentStep(5); // 생성 단계로 이동
   };
-
   useEffect(() => {
     if (currentStep === 4) {
       setMessages((prevMessages) => [
@@ -152,16 +158,12 @@ const Chatbot = () => {
     setCurrentStep(2); // 내용 입력 단계로 이동
   };
 
-  // useEffect(() => {
-  //   if (currentStep === 5 && (mood || keywords)) {
-  //   }
-  // }, [mood]);
 
   const handleGenerateMessage = async () => {
     const data = {
       userId,
       text,
-      mood,
+      mood: mood,
       keyword: keywords,
       category,
     };

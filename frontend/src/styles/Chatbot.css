@@ -226,14 +226,15 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  height: 100vh;
+  height: 70vh;
+  padding: 10px;
 }
 
 .chatbot-container {
   width: 30%;
   border-right: 1px solid #ccc;
   padding: 1em;
-  height: 70%;
+  /* height: 50%; */
   overflow-y: auto;
 }
 

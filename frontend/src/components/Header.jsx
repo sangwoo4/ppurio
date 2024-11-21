@@ -30,7 +30,7 @@ const Header = () => {
   return (
     <header className="header">
       <div className="logo-container">
-        <span className="logo-text">Daou Tech</span>
+        <span className="logo-text">Pentagon</span>
       </div>
       <nav className="nav-links">
         <Link className="nav-link" to="/"><IoHome className="icon" />홈</Link>
