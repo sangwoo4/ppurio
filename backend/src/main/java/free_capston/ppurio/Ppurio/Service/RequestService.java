@@ -86,6 +86,7 @@ public class RequestService {
 
     private Map<String, Object> createSendTestParams(SendMessageDto sendMessageDto) throws IOException {
         HashMap<String, Object> params = new HashMap<>();
+
         // 기존 필드 설정
         params.put("account", sendMessageDto.getAccount());
         params.put("messageType", sendMessageDto.getMessageType());
@@ -96,7 +97,9 @@ public class RequestService {
         params.put("targets", sendMessageDto.getTargets());
         params.put("refKey", refkey);
 
-        if (sendMessageDto.getFiles() != null) {
+        // files 필드 처리
+        if (sendMessageDto.getFiles() != null && !sendMessageDto.getFiles().isEmpty()) {
+            // files가 null이 아니고 비어있지 않으면 처리
             List<Map<String, Object>> fileParamsList = sendMessageDto.getFiles().stream()
                     .map(fileUrl -> {
                         try {

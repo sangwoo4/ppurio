@@ -29,35 +29,55 @@ public class SaveService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user ID: " + sendMessageDto.getUserId()));
 
         // Message 엔티티 생성 및 저장
-        Message message = buildMessageEntity(sendMessageDto.getContent(), user, sendMessageDto.getPrompt(), sendMessageDto.getCategory());
+        Message message = buildMessageEntity(sendMessageDto, user);
         message = messageRepository.save(message); // 저장 후 ID가 설정됨
 
         // Image 엔티티 생성 및 저장
-        Message finalMessage = message;
-        sendMessageDto.getFiles().forEach(fileDto -> {
-            boolean imageExists = imageRepository.existsByMessageAndUrl(finalMessage, fileDto.getFileUrl());
+//        Message finalMessage = message;
+//        sendMessageDto.getFiles().forEach(fileDto -> {
+//            boolean imageExists = imageRepository.existsByMessageAndUrl(finalMessage, fileDto.getFileUrl());
+//
+//            if (!imageExists) { // 중복 확인
+//                Image image = buildImageEntity(fileDto.getFileUrl(), finalMessage);
+//                imageRepository.save(image); // Message와 연관된 Image 저장
+//            }
+//        });
 
-            if (!imageExists) { // 중복 확인
-                Image image = buildImageEntity(fileDto.getFileUrl(), finalMessage);
-                imageRepository.save(image); // Message와 연관된 Image 저장
-            }
-        });
+        // Image 엔티티 생성 및 저장
+        if (sendMessageDto.getFiles() != null && !sendMessageDto.getFiles().isEmpty()) {
+            Message finalMessage = message;
+            sendMessageDto.getFiles().forEach(fileDto -> {
+                boolean imageExists = imageRepository.existsByMessageAndUrl(finalMessage, fileDto.getFileUrl());
+
+                if (!imageExists) { // 중복 확인
+                    Image image = buildImageEntity(fileDto.getFileUrl(), finalMessage);
+                    imageRepository.save(image); // Message와 연관된 Image 저장
+                }
+            });
+        } else {
+            // Files가 null 또는 비어있을 때 로직 (필요하면 추가)
+            System.out.println("No files provided for the message.");
+        }
+
     }
 
-    // Message 엔티티 생성
-    public Message buildMessageEntity(String content, User user, String prompt, String categoryName) {
-        // Category 이름으로 이미 존재하는 Category 엔티티 조회
-        Category categoryEntity = categoryRepository.findByCategory(categoryName)
-                .orElseThrow(() -> new IllegalArgumentException("Category not found: " + categoryName));
+    public Message buildMessageEntity(SendMessageDto sendMessageDto, User user) {
+        // Category 이름으로 이미 존재하는 Category 엔티티 조회 (없으면 null 처리)
+        Category categoryEntity = null;
+        if (sendMessageDto.getCategory() != null && !sendMessageDto.getCategory().isEmpty()) {
+            categoryEntity = categoryRepository.findByCategory(sendMessageDto.getCategory())
+                    .orElseThrow(() -> new IllegalArgumentException("Category not found: " + sendMessageDto.getCategory()));
+        }
 
         // Message 객체 빌드
         return Message.builder()
-                .messageContent(content)
-                .user(user)
-                .prompt(prompt)
-                .category(categoryEntity) // 이미 저장된 Category를 참조
+                .messageContent(sendMessageDto.getContent()) // SendMessageDto에서 content 가져옴
+                .user(user) // 전달받은 User 객체
+                .prompt(sendMessageDto.getPrompt()) // SendMessageDto에서 prompt 가져옴
+                .category(categoryEntity) // categoryEntity가 null일 수도 있음
                 .build();
     }
+
     // Image 엔티티 생성
     private Image buildImageEntity(String fileUrl, Message message) {
         return Image.builder()
