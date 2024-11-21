@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Chatbot.css";
 import API_BASE_URL from "../../URL_API";
+import { useNavigate } from 'react-router-dom';
 
 const Chatbot = () => {
-  const steps = 6; // 단계 수 변경
+  const navigate = useNavigate();
+  const steps = 6;
   const [currentStep, setCurrentStep] = useState(0);
   const [messages, setMessages] = useState([
     { text: "텍스트와 이미지 생성 중 선택해주세요", isBot: true },
@@ -11,12 +13,17 @@ const Chatbot = () => {
   const [inputValue, setInputValue] = useState("");
   const [chatMode, setChatMode] = useState(null);
   const [selectedTone, setSelectedTone] = useState(null);
-  const [keywords, setKeywords] = useState([]);
+  const [keyword, setKeyword] = useState([]);
   const [userId, setUserId] = useState(null);
   const [text, setText] = useState("");
   const [mood, setMood] = useState([]);
   const [imageUrl, setImageUrl] = useState('');
-  const [category, setCategory] = useState(null); // 생성 목적 상태 추가
+  const [category, setCategory] = useState(null);
+  const [resultData, setResultData] = useState(null); // 결과 데이터를 저장하는 상태
+
+  const [resultImgData, setResultImgData] = useState(null); // 이미지 결과 데이터를 저장하는 상태
+  const [resultTxtData, setResultTxtData] = useState(null); // 텍스트 결과 데이터를 저장하는 상태
+
 
   // 로컬스토리지에서 userId 가져오기
   useEffect(() => {
@@ -69,7 +76,7 @@ const Chatbot = () => {
         handleNextMessage();
       } else if (currentStep === 3) {
         const tags = inputValue.split(" ").slice(0, 3); // 최대 3개 추출
-        setKeywords(tags);
+        setKeyword(tags);
         setMessages((prevMessages) => [
           ...prevMessages,
           { text: `입력한 키워드: ${tags.join(", ")}`, isBot: false },
@@ -84,14 +91,14 @@ const Chatbot = () => {
           { text: "모든 입력이 완료되었습니다. 생성 중입니다...", isBot: true },
         ]);
         setCurrentStep(5); // 생성 완료 단계로 이동
-        handleGenerateMessage(); // API 호출
+        // handleGenerateMessage(); // API 호출
       }
     }
   };
 
   const handleSkip = () => {
     if (currentStep === 3) {
-      setKeywords(null); // 해시태그를 null로 설정
+      setKeyword(null); // 해시태그를 null로 설정
       setMessages((prevMessages) => [
         ...prevMessages,
         { text: "중요 키워드를 건너뛰었습니다.", isBot: true },
@@ -164,7 +171,7 @@ const Chatbot = () => {
       userId,
       text,
       mood: mood,
-      keyword: keywords,
+      keyword: keyword,
       category,
     };
 
@@ -186,10 +193,12 @@ const Chatbot = () => {
 
       if (response.ok) {
         const result = await response.json();
+        // setResultData(result.data); // 결과 데이터 저장
         console.log("응답 결과:", result); // 응답 결과 콘솔에 출력
 
         if (chatMode === "image") {
           // 이미지 생성 결과 처리
+          setResultImgData(result.data); // 이미지 결과 데이터 저장
           setMessages((prevMessages) => [
             ...prevMessages,
             { text: "생성이 완료되었습니다!", isBot: true },
@@ -201,6 +210,7 @@ const Chatbot = () => {
           ]);
         } else {
           // 텍스트 생성 결과 처리
+          setResultTxtData(result.data); // 텍스트 결과 데이터 저장
           setMessages((prevMessages) => [
             ...prevMessages,
             { text: "생성이 완료되었습니다!", isBot: true },
@@ -217,6 +227,18 @@ const Chatbot = () => {
         ...prevMessages,
         { text: `에러 발생: ${error.message}`, isBot: true },
       ]);
+    }
+  };
+
+  const handleEdit = () => {
+    if (resultImgData) {
+      navigate('/edit/product', { state: { imageSrc: resultImgData } }); // EditProduct로 이미지 결과만 전달
+    }
+  };
+
+  const handleSendMessageDirect = () => {
+    if (resultImgData || resultTxtData) {
+      navigate('/send/message', { state: { imageSrc: resultImgData, text: resultTxtData } }); // 텍스트와 이미지 결과를 모두 전달
     }
   };
 
@@ -284,7 +306,6 @@ const Chatbot = () => {
             <button onClick={() => handleButtonClick("image")}>이미지 생성</button>
           </div>
         )}
-
       </div>
 
       <form className="step-form">
@@ -320,6 +341,28 @@ const Chatbot = () => {
           </div>
         </div>
       </form>
+
+      {/* 결과 화면 영역 */}
+      <div className="result-container">
+        <h2>결과 화면</h2>
+        {resultImgData || resultTxtData ? (
+          chatMode === "image" ? (
+            resultImgData ? (
+              <img src={resultImgData.url} alt="Generated" />
+            ) : (
+              <p>이미지 생성 중 오류가 발생했습니다.</p>
+            )
+          ) : (
+            <p>{resultTxtData ? resultTxtData.text : '텍스트 생성 중 오류가 발생했습니다.'}</p>
+          )
+        ) : (
+          <p>결과가 여기에 표시됩니다.</p>
+        )}
+        <div className="result-actions">
+          <button onClick={handleEdit}>편집하기</button>
+          <button onClick={handleSendMessageDirect}>메시지 전송하기</button>
+        </div>
+      </div>
     </div>
   );
 
@@ -336,7 +379,7 @@ export default Chatbot;
 // import API_BASE_URL from "../../URL_API";
 
 // const Chatbot = () => {
-//   const steps = 6; // 단계 수 변경
+//   const steps = 6;
 //   const [currentStep, setCurrentStep] = useState(0);
 //   const [messages, setMessages] = useState([
 //     { text: "텍스트와 이미지 생성 중 선택해주세요", isBot: true },
@@ -344,12 +387,12 @@ export default Chatbot;
 //   const [inputValue, setInputValue] = useState("");
 //   const [chatMode, setChatMode] = useState(null);
 //   const [selectedTone, setSelectedTone] = useState(null);
-//   const [keywords, setKeywords] = useState([]);
+//   const [keyword, setKeyword] = useState([]);
 //   const [userId, setUserId] = useState(null);
 //   const [text, setText] = useState("");
 //   const [mood, setMood] = useState([]);
 //   const [imageUrl, setImageUrl] = useState('');
-//   const [category, setCategory] = useState(null); // 생성 목적 상태 추가
+//   const [category, setCategory] = useState(null);
 
 //   // 로컬스토리지에서 userId 가져오기
 //   useEffect(() => {
@@ -402,7 +445,7 @@ export default Chatbot;
 //         handleNextMessage();
 //       } else if (currentStep === 3) {
 //         const tags = inputValue.split(" ").slice(0, 3); // 최대 3개 추출
-//         setKeywords(tags);
+//         setKeyword(tags);
 //         setMessages((prevMessages) => [
 //           ...prevMessages,
 //           { text: `입력한 키워드: ${tags.join(", ")}`, isBot: false },
@@ -410,7 +453,7 @@ export default Chatbot;
 //         setInputValue(""); // 입력 필드 초기화
 //         setCurrentStep(4); // 어조 선택 단계로 이동
 //       } else if (currentStep === 4) {
-//         setMood([inputValue]); // 사용자가 입력한 어조 저장
+//         setMood([inputValue]); // 직접 입력한 어조 저장
 //         setMessages((prevMessages) => [
 //           ...prevMessages,
 //           { text: `입력한 어조: ${inputValue}`, isBot: false },
@@ -424,7 +467,7 @@ export default Chatbot;
 
 //   const handleSkip = () => {
 //     if (currentStep === 3) {
-//       setKeywords(null); // 해시태그를 null로 설정
+//       setKeyword(null); // 해시태그를 null로 설정
 //       setMessages((prevMessages) => [
 //         ...prevMessages,
 //         { text: "중요 키워드를 건너뛰었습니다.", isBot: true },
@@ -453,18 +496,24 @@ export default Chatbot;
 //     }
 //   };
 
-//   const handleToneSelect = (tone) => {
-//     setSelectedTone(tone);
-//     setMood([tone]); // 선택된 어조를 배열로 저장
+//   // mood가 변경될 때마다 handleGenerateMessage 호출
+//   useEffect(() => {
+//     if (mood && mood.length > 0) {
+//       handleGenerateMessage();
+//     }
+//   }, [mood]); // mood가 변경될 때마다 실행
+
+//   // mood가 선택되었을 때 상태 업데이트
+//   const handleToneSelect = (mood) => {
+//     setSelectedTone(mood);
+//     setMood([mood]); // mood 선택 시 상태 업데이트
 //     setMessages((prevMessages) => [
 //       ...prevMessages,
-//       { text: `선택한 어조: ${tone}`, isBot: false },
+//       { text: `선택한 어조: ${mood}`, isBot: false },
 //       { text: "모든 입력이 완료되었습니다. 생성 중입니다...", isBot: true },
 //     ]);
-//     setCurrentStep(5); // 생성 완료 단계로 이동
-//     handleGenerateMessage(); // API 호출
+//     setCurrentStep(5); // 생성 단계로 이동
 //   };
-
 //   useEffect(() => {
 //     if (currentStep === 4) {
 //       setMessages((prevMessages) => [
@@ -485,18 +534,14 @@ export default Chatbot;
 //     setCurrentStep(2); // 내용 입력 단계로 이동
 //   };
 
-//   useEffect(() => {
-//     if (currentStep === 5 && (mood || keywords)) {
-//     }
-//   }, [mood]);
 
 //   const handleGenerateMessage = async () => {
 //     const data = {
 //       userId,
 //       text,
-//       mood,
-//       keyword: keywords,
-//       category, // 생성 목적 추가
+//       mood: mood,
+//       keyword: keyword,
+//       category,
 //     };
 
 //     const apiUrl =
@@ -657,4 +702,3 @@ export default Chatbot;
 // };
 
 // export default Chatbot;
-

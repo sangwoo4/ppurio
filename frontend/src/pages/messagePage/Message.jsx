@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { DeviceFrameset } from "react-device-frameset"; // DeviceFrameset import
 import "react-device-frameset/styles/marvel-devices.min.css"; // 스타일 import
@@ -7,9 +8,24 @@ import "../../styles/Message.css";
 import API_BASE_URL from "../../URL_API"; // API 주소
 
 const Message = () => {
+  const location = useLocation();
   const [message, setMessage] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [image, setImage] = useState(null);
+
+  const [imageSrc, setImageSrc] = useState(null); // 이미지 상태
+  const [text, setText] = useState(null); // 텍스트 상태
+
+  useEffect(() => {
+    if (location.state) {
+      // 전달받은 데이터에서 이미지 URL만 추출하여 상태에 설정
+      setImageSrc(location.state.imageSrc ? location.state.imageSrc.url : null);
+      setText(location.state.text); // Ensure location.state.text is an object with a 'text' property
+    }
+  }, [location.state]);
+
+  console.log("Chatbot에서 전달받은 이미지:", imageSrc); // 이미지 확인
+  console.log("Chatbot에서 전달받은 텍스트:", text); // 텍스트 확인
 
   const handleMessageChange = (e) => setMessage(e.target.value);
   const handlePhoneNumberChange = (e) => setPhoneNumber(e.target.value);
@@ -17,7 +33,7 @@ const Message = () => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = () => setImage(reader.result);
+      reader.onload = () => setImageSrc(reader.result); // 선택한 이미지의 데이터 URL을 상태에 저장
       reader.readAsDataURL(file);
     }
   };
@@ -45,7 +61,7 @@ const Message = () => {
         const result = await response.json();
         console.log("메시지 전송 성공:", result);
         setMessage("");
-        setImage(null);
+        setImageSrc(null);
       } else {
         console.error("메시지 전송 실패:", await response.json());
       }
@@ -78,7 +94,7 @@ const Message = () => {
                 rows={3}
                 className="message-input"
                 placeholder="메시지를 입력하세요"
-                value={message}
+                value={message || (text && text.text ? text.text : '')} // Access text.text if text is an object
                 onChange={handleMessageChange}
               />
             </Form.Group>
@@ -119,9 +135,10 @@ const Message = () => {
               </div>
 
               <div className="phone-image-preview">
-                {image ? (
+                {/* 이미지 미리보기 */}
+                {imageSrc ? (
                   <img
-                    src={image}
+                    src={imageSrc}
                     alt="첨부 이미지"
                     style={{ maxWidth: "100%", borderRadius: "10px" }}
                   />
@@ -134,8 +151,9 @@ const Message = () => {
               </div>
 
               <div className="phone-message-preview">
-                {message ? (
-                  <p style={{ margin: 0 }}>{message}</p>
+                {/* 텍스트 미리보기 */}
+                {text && text.text ? (
+                  <p style={{ margin: 0 }}>{text.text}</p>
                 ) : (
                   <div className="default-message">
                     <FaCommentDots size={50} color="#ccc" />
