@@ -1,31 +1,25 @@
 package free_capston.ppurio.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Entity
-@Table(name = "image")
+@Table(name = "category")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Builder
-public class Image {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "message_id", nullable = false)
-    private Message message;
+    @Column
+    private String category;
 
-    @Column(nullable = false)
-    private String url;
-
+//    @Column(columnDefinition = "TEXT", name = "prompt")
+//    private String prompt;
 }

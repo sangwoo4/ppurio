@@ -30,7 +30,7 @@ public class AccountService {
             return ResponseDto.setFailed("해당 이메일의 사용자가 존재하지 않습니다.");
         }
         Boolean loginResult = matchingPassword(user.get().getPassword(), loginDto.getPassword());
-        Long userId = user.get().getUserId();
+        Long userId = user.get().getId();
 
         if (loginResult) {
             LoginResponseDto userIdDto = new LoginResponseDto(userId);
