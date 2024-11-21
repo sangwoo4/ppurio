@@ -1,32 +1,25 @@
-# uvicorn.py (ai/Utils)
-import ai.Utils.main as main
-from fastapi import FastAPI
-from ai.Text.text import generate_text, TextRequest
-from ai.Image.image import generate_image_and_text, ImageCreateRequest
-from ai.Image.image import generate_image, ImageCreateRequest
-from ai.Image.image import generate_new_image, ImageCreateRequest
+# main.py
 
+import logging
+from fastapi import FastAPI
+from ai.Text.text import TextService
+from ai.Image.image import ImageService
+from ai.Utils.schemas import TextRequest, ImageCreateRequest
+
+logger = logging.getLogger("uvicorn.error")
+app_logger = logging.getLogger("uvicorn.access")
+
+# FastAPI 앱 초기화
 app = FastAPI()
+
+# 서비스 초기화
+text_service = TextService()
+image_service = ImageService()
 
 @app.post("/text")
 async def generate_text_endpoint(request: TextRequest):
-    response = await generate_text(request)
-    return response
-
-@app.post("/text/image")
-async def generate_image_text_endpoint(request: ImageCreateRequest):
-    response = await generate_image_and_text(request)
-    return response
+    return await text_service.generate_text(request)
 
 @app.post("/image")
 async def generate_image_endpoint(request: ImageCreateRequest):
-    response = await generate_image(request)
-    return response
-
-@app.post("/new/image")
-async def generate_image_endpoint(request: ImageCreateRequest):
-    response = await generate_new_image(request)
-    return response
-
-if __name__ == "__main__":
-    main.run("uvicorn:app", host="0.0.0.0", port=8000, reload=True)
+    return await image_service.generate_image(request)
