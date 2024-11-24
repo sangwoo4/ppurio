@@ -13,13 +13,14 @@ public class DataLoader {
     ApplicationRunner initDate(CategoryRepository categoryRepository){
         return args -> {
             if(categoryRepository.count() == 0){
-                categoryRepository.save(new Category("재난 경고"));
-                categoryRepository.save(new Category("광고 및 홍보"));
-                categoryRepository.save(new Category("일반 안내"));
-                categoryRepository.save(new Category("정당 관련"));
-                categoryRepository.save(new Category("증권 관련"));
-                categoryRepository.save(new Category("실종"));
-                categoryRepository.save(new Category("명함"));
+                categoryRepository.save(new Category("재난/경고성 문자"));
+                categoryRepository.save(new Category("광고/홍보 문자"));
+                categoryRepository.save(new Category("정당 선거 문자"));
+                categoryRepository.save(new Category("일반 안내 문자"));
+                categoryRepository.save(new Category("증권 관련 문자"));
+                categoryRepository.save(new Category("실종 안내 문자"));
+                categoryRepository.save(new Category("명함 문자"));
+                categoryRepository.save(new Category("부고 정보"));
                 categoryRepository.save(new Category("건강 정보"));
             }
         };
