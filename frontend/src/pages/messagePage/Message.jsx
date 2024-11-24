@@ -39,8 +39,14 @@ const Message = () => {
       setUserText(location.state.userText);
       setCategory(location.state.category);
 
+      // 편집된 이미지도 전달받았다면 설정
+      if (location.state.editImage) {
+        setImageSrc(location.state.editImage); // 편집된 이미지를 이미지 편집기에서 사용
+      }
+
       // 전달받은 값들을 콘솔로 출력
       console.log("Received Image Source:", location.state.imageSrc);
+      console.log("Received Edited Image:", location.state.editImage); // 편집된 이미지 확인
       console.log("Received Text:", location.state.text);
       console.log("userText: ", location.state.userText, ", userCategory: ", location.state.category);
     }
