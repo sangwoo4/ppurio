@@ -232,6 +232,7 @@
 
 .chatbot-container {
   width: 30%;
+  max-height: 700px;
   border-right: 1px solid #ccc;
   padding: 1em;
   /* height: 50%; */
@@ -341,6 +342,7 @@
 
 
 .category-selection button,
+.re-selection button,
 .skip-button {
   padding: 5px;
   margin: 5px;
@@ -355,12 +357,14 @@
 
 /* 버튼 호버 효과 */
 .category-selection button,
+.re-selection button,
 .skip-button:hover {
   background-color: #512da8;
 }
 
 /* 버튼 컨테이너 중앙 정렬 */
 .category-selection,
+.re-selection,
 .skip-button {
   justify-content: center;
 }
