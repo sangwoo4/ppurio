@@ -1,25 +1,24 @@
-# common_service.py
-
 import logging
 from fastapi import HTTPException
 
-def setup_logger():
-    logger = logging.getLogger("fastapi_logger")
+def setup_logger(name="base_logger"):
+    logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
 
-    if not logger.handlers:
-        handler = logging.StreamHandler()
+    if not any(isinstance(h, logging.StreamHandler) for h in logger.handlers):
+        stream_handler = logging.StreamHandler()
         formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s\n"
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         )
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
+        stream_handler.setFormatter(formatter)
+        logger.addHandler(stream_handler)
 
+    logger.propagate = False
     return logger
 
 class CommonService:
     def __init__(self):
-        self.logger = setup_logger()
+        self.logger = setup_logger("base_logger")
 
     def log_request(self, request_data):
         self.logger.info(f"Request Data: {request_data}")

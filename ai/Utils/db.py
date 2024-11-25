@@ -1,7 +1,8 @@
-import mysql.connector
+import aiomysql
+import random
+import asyncio
 from fastapi import HTTPException
-import logging
-import traceback
+from Utils.common_service import setup_logger
 
 # 데이터베이스 설정
 DB_CONFIG = {
@@ -9,96 +10,87 @@ DB_CONFIG = {
     'password': '1234',
     'host': 'mysql-container',
     'port': 3306,
-    'database': 'ppurio'
+    'db': 'ppurio',
+    'charset': 'utf8mb4'
 }
 
-#localhost
-# DB_CONFIG = {
-#     'user': 'root',
-#     'password': '1234',
-#     'host': 'localhost',
-#     'database': 'ppurio'
-# }
+# DB 전용 로거
+db_logger = setup_logger("db_logger")
 
-# 로거 설정
-logger = logging.getLogger(__name__)
+class DatabaseConnection:
+    def __init__(self, config):
+        self.config = config
+        self.logger = db_logger
 
-# 메시지 및 이미지 데이터를 가져오는 함수
-def fetch_message_and_image_from_db(category: str = None):
-    """
-    사용자 입력(prompt), 이미지 URL, 카테고리 ID를 데이터베이스에서 가져옵니다.
-    특정 카테고리로 필터링할 수 있습니다.
-    카테고리가 None인 경우, 카테고리가 NULL인 데이터를 가져옵니다.
-    """
-    try:
-        # MySQL 연결
-        conn = mysql.connector.connect(**DB_CONFIG)
-        logger.info("데이터베이스 연결 성공")
-        cursor = conn.cursor(dictionary=True)
+    async def connect(self):
+        try:
+            self.logger.info("데이터베이스 연결 시도 중...")
+            connection = await aiomysql.connect(**self.config)
+            self.logger.info("데이터베이스 연결 성공")
+            return connection
+        except aiomysql.Error as e:
+            self.logger.error(f"데이터베이스 연결 실패: {e.args}")
+            raise
 
-        # 기본 쿼리
+class DataService:
+    def __init__(self, db_connection: DatabaseConnection):
+        self.db_connection = db_connection
+        self.logger = db_logger
+
+    async def fetch_data(self, query: str, params: tuple = None):
+        try:
+            conn = await self.db_connection.connect()
+            async with conn.cursor(aiomysql.DictCursor) as cursor:
+                self.logger.info(f"쿼리 실행 중: {query}, 매개변수: {params}")
+                await cursor.execute(query, params)
+                results = await cursor.fetchall()
+                self.logger.info(f"쿼리 실행 완료. 조회된 행 수: {len(results)}개")
+            conn.close()
+            return results
+        except aiomysql.Error as e:
+            self.logger.error(f"MySQL 오류 발생: {e.args}")
+            raise HTTPException(status_code=500, detail="데이터베이스 처리 중 오류가 발생했습니다.")
+        except Exception as e:
+            self.logger.error(f"알 수 없는 오류 발생: {str(e)}")
+            raise HTTPException(status_code=500, detail="데이터 조회 중 오류가 발생했습니다.")
+
+
+class MessageImageService:
+    def __init__(self, data_service: DataService):
+        self.data_service = data_service
+        self.logger = db_logger
+
+    async def fetch_message_and_image(self, category: str = None):
         query = """
         SELECT 
             m.prompt AS user_prompt,
             i.url AS image_url,
             m.category_id AS category_id
-        FROM message_list m
+        FROM message m
         LEFT JOIN image i ON m.id = i.message_id
         """
+        params = None
 
-        # 카테고리 조건 추가
-        if category is None:
+        if category:
+            category_id_query = "SELECT id FROM category WHERE category = %s"
+            category_id = await self.data_service.fetch_data(category_id_query, (category,))
+            if category_id:
+                query += " WHERE m.category_id = %s"
+                params = (category_id[0]['id'],)
+            else:
+                self.logger.warning(f"카테고리 '{category}'를 찾을 수 없습니다.")
+                return []
+        else:
             query += " WHERE m.category_id IS NULL"
+
+        results = await self.data_service.fetch_data(query, params)
+
+        if results:
+            delay = random.uniform(4, 6)
+            self.logger.info(f"랜덤 대기 시간 적용 중: {delay:.2f}초")
+            await asyncio.sleep(delay)
+            self.logger.info("랜덤 대기 시간이 완료되었습니다.")
         else:
-            query += " WHERE m.category_id = %s"
+            self.logger.info("데이터베이스에서 결과를 찾을 수 없습니다. 대기 시간을 건너뜁니다.")
 
-        # 쿼리 실행
-        if category is None:
-            cursor.execute(query)
-        else:
-            cursor.execute(query, (category,))
-
-        results = cursor.fetchall()
-        logger.info(f"쿼리 실행 성공, 결과: {results}")
-
-        cursor.close()
-        conn.close()
-
-        if not results:
-            logger.warning("데이터베이스에서 데이터를 찾을 수 없습니다.")
         return results
-
-    except Exception as e:
-        logger.error(f"데이터베이스에서 데이터 로드 중 오류 발생: {str(e)}")
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="데이터를 로드하는 중 오류가 발생했습니다.")
-
-# 데이터베이스 연결 테스트 함수
-def test_db_connection():
-    """
-    데이터베이스 연결을 테스트합니다.
-    """
-    try:
-        conn = mysql.connector.connect(**DB_CONFIG)
-        cursor = conn.cursor()
-        cursor.execute("SELECT DATABASE()")
-        result = cursor.fetchone()
-        cursor.close()
-        conn.close()
-        logger.info(f"데이터베이스 연결 성공: {result[0]}")
-        return True
-    except Exception as e:
-        logger.error(f"데이터베이스 연결 실패: {str(e)}")
-        return False
-if __name__ == "__main__":
-    # DB 연결 테스트 실행
-    print("DB 연결 테스트 결과:", test_db_connection())
-    
-    # 메시지 및 이미지 가져오기 테스트
-    print("메시지 및 이미지 가져오기 결과:")
-    try:
-        result = fetch_message_and_image_from_db()
-        for row in result:
-            print(row)
-    except Exception as e:
-        print(f"오류 발생: {e}")
