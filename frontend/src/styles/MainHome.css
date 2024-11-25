@@ -6,3 +6,161 @@
   font-family: 'Montserrat', sans-serif;
   /* min-height: 100%; 넣으면 로그인 css 조짐*/
 }
+
+@font-face {
+  font-family: 'HakgyoansimChilpanjiugaeOTF-B';
+  src: url("../assets/fonts/HakgyoansimChilpanjiugaeOTF-B.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Moneygraphy-Pixel';
+  src: url("../assets/fonts/Moneygraphy-Pixel.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+.textPhrase {
+  position: absolute;
+  top: 185px;
+  left: 140px;
+  font-family: 'Moneygraphy-Pixel', sans-serif !important;
+}
+
+.mainframe img {
+  position: relative;
+  left: -5%;
+  width: 85%;
+  height: auto;
+  object-fit: contain;
+  top: 40px;
+}
+
+.mainhome-container {
+  position: relative;
+  /* 자식 요소들을 절대 위치로 배치 가능하게 설정 */
+  width: 100%;
+  height: 100vh;
+  background-color: #f5f7fa;
+  overflow: hidden;
+}
+
+.textPhrase {
+  position: absolute;
+  top: 185px;
+  left: 140px;
+  font-family: 'HakgyoansimChilpanjiugaeTTF-B';
+}
+
+/* 텍스트 박스 */
+.text-box {
+  position: absolute;
+  top: 330px;
+  left: 370px;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  width: 600px;
+  /* 박스 크기 */
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  white-space: pre-wrap;
+  line-height: 1.5;
+  color: #333;
+  z-index: 2;
+  /* 이미지 위에 표시되도록 설정 */
+}
+
+.imagePhrase {
+  position: absolute;
+  top: 550px;
+  left: 900px;
+}
+
+/* 이미지 박스 */
+.image-box {
+  position: absolute;
+  top: 680px;
+  left: 680px;
+  transform: translate(-50%, -50%);
+  height: 380px;
+  background-color: #e9ecef;
+  border: 1px dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  z-index: 1;
+  animation: slightMove 2s ease-in-out infinite;
+  /* 애니메이션 속도 변경 */
+}
+
+/* 미세하게 위아래로 움직이는 애니메이션 */
+@keyframes slightMove {
+  0% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) translateY(-10px);
+    /* 위로 10px 이동 */
+  }
+
+  100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+}
+
+
+
+/* AI 버튼 */
+.ai-button {
+  position: absolute;
+  /* 절대 위치 설정 */
+  bottom: 200px;
+  /* 부모 컨테이너 기준으로 아래에서 10% */
+  right: 90px;
+  /* 부모 컨테이너 기준으로 오른쪽에서 10% */
+  padding: 15px 25px;
+  background-color: #7cacd6;
+  ;
+  color: white;
+  font-size: 25px;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+  transform: scale(1);
+}
+
+.ai-button:hover {
+  background-color: #357ab7;
+  transform: scale(1.05);
+  /* Hover 시 크기 증가 */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  /* 그림자 효과 강조 */
+}
+
+.ai-button:active {
+  background-color: #3c87bd;
+  transform: scale(1);
+  /* 클릭 시 크기 복원 */
+}
+
+.ai-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(72, 126, 207, 0.5);
+  /* 포커스 시 외곽선 추가 */
+}

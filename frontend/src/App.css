@@ -3,3 +3,10 @@
   min-height: 100%;
   padding-bottom: auto;
 }
+
+@font-face {
+  font-family: 'HakgyoansimChilpanjiugaeTTF-B';
+  src: url("./assets/fonts/HakgyoansimChilpanjiugaeTTF-B.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}

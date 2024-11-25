@@ -22,5 +22,5 @@ footer {
 
   height: auto;
   position: relative;
-  transform: translateY(1000%);
+  /* transform: translateY(100%); */
 }

@@ -5,12 +5,14 @@
   align-items: center;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2rem 2rem 5rem;
   font-family: "Arial", sans-serif;
   background-color: #f7f9fc;
   width: 100%;
   box-sizing: border-box;
+  min-height: 100vh;
 }
+
 
 /* 편집기 컨테이너 */
 .editor-container {
@@ -117,4 +119,8 @@
     flex-direction: column;
     align-items: center;
   }
+}
+
+.send-message-button {
+  margin-top: 30px;
 }
