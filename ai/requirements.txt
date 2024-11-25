@@ -2,7 +2,11 @@ fastapi
 uvicorn
 openai
 python-dotenv
-PIL
+Pillow
 requests
 pydantic
 uuid
+mysql-connector-python
+pecab
+scikit-learn
+aiomysql
