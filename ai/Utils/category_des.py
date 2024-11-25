@@ -1,6 +1,6 @@
 # category_des.py
-
 class CategoryDescription:
+    # 문자 생성 전용 카테고리 세부 설명
     CATEGORY_DESCRIPTIONS_TEXT = {
     "재난/경고성 문자": "재난 상황이나 경고성 문자, 또는 주기적인 사내 대피 안내 문자",
     "광고/홍보 문자": "기업의 제품이나 서비스 홍보를 위한 문자",
@@ -13,6 +13,7 @@ class CategoryDescription:
     "건강 정보": "건강에 대한 문자"
     }
 
+    # 이미지 생성 전용 카테고리 세부 설명
     CATEGORY_DESCRIPTIONS_IMAGE = {
     "재난/경고성 문자": "경고성 이미지나 사내 대피 안내 지침 이미지를 함께 전송",
     "광고/홍보 문자": "서비스 홍보를 위한 이미지를 만들기, 시각적으로 홍보 효과를 주기.",

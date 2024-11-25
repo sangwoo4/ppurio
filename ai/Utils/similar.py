@@ -1,63 +1,57 @@
+# similar.py
 from abc import ABC, abstractmethod
 from pecab import PeCab
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# 유사도 계산 인터페이스 정의
+# 한국어 문장 토큰화
+def tokenize_korean(sentence: str) -> str:
+    pecab = PeCab()
+    tokens = pecab.morphs(sentence)
+    return " ".join(tokens)
+
+# 유사도 계산 전략을 정의하는 추상 클래스
 class SimilarityStrategy(ABC):
     @abstractmethod
     def calculate_similarity(self, sentence1: str, sentence2: str) -> float:
         pass
 
-# 자카드 유사도 전략
-# class JaccardSimilarity(SimilarityStrategy):
-#     def calculate_similarity(self, sentence1: str, sentence2: str) -> float:
-#         set1 = set(sentence1.lower().split())
-#         set2 = set(sentence2.lower().split())
-#         intersection = set1.intersection(set2)
-#         union = set1.union(set2)
-#         return len(intersection) / len(union) if len(union) > 0 else 0.0
-
-# 코사인 유사도 전략
+# 코사인 유사도를 사용한 유사도 계산 클래스
 class CosineSimilarity(SimilarityStrategy):
-    def __init__(self):
-        self.pecab = PeCab()
-
-    def tokenize_korean(self, sentence: str) -> str:
-        tokens = self.pecab.morphs(sentence)
-        return " ".join(tokens)
-
     def calculate_similarity(self, sentence1: str, sentence2: str) -> float:
-        try:
-            tokenized_sentence1 = self.tokenize_korean(sentence1)
-            tokenized_sentence2 = self.tokenize_korean(sentence2)
-            vectorizer = TfidfVectorizer()
-            vectors = vectorizer.fit_transform([tokenized_sentence1, tokenized_sentence2])
-            return cosine_similarity(vectors[0], vectors[1])[0][0]
-        except Exception as e:
-            print(f"유사도 계산 중 오류 발생: {str(e)}")
-            return 0.0
+        tokenized_sentence1 = tokenize_korean(sentence1)
+        tokenized_sentence2 = tokenize_korean(sentence2)
+        vectorizer = TfidfVectorizer()
+        vectors = vectorizer.fit_transform([tokenized_sentence1, tokenized_sentence2])
+        return cosine_similarity(vectors[0], vectors[1])[0][0]
 
-# 유사도 계산기
+# 유사도 계산기를 관리하는 클래스
 class SimilarityCalculator:
-    _instance = None
+    def __init__(self, strategy: SimilarityStrategy):
+        self.strategy = strategy
 
-    def __new__(cls, strategy: SimilarityStrategy):
-        if cls._instance is None:
-            cls._instance = super(SimilarityCalculator, cls).__new__(cls)
-            cls._instance.strategy = strategy
-        return cls._instance
+    def calculate(self, text1: str, text2: str) -> float:
+        return self.strategy.calculate_similarity(text1, text2)
 
-    def calculate(self, sentence1: str, sentence2: str) -> float:
-        return self.strategy.calculate_similarity(sentence1, sentence2)
+# 유사도 서비스 클래스
+class SimilarityService:
+    def __init__(self, strategy: SimilarityStrategy):
+        self.similarity_calculator = SimilarityCalculator(strategy)
 
-# 사용 예시
-# if __name__ == "__main__":
-#     sentence1 = "나는 학교에 갔다."
-#     sentence2 = "내가 학교로 등교했다."
+    def find_similar_entry(self, input_text: str, db_data: list, threshold: float = 0.65) -> dict:
+        highest_similarity = 0
+        best_entry = None
 
-#     jaccard_calculator = SimilarityCalculator(JaccardSimilarity())
-#     print(f"자카드 유사도: {jaccard_calculator.calculate(sentence1, sentence2):.2f}")
+        for entry in db_data:
+            similarity = self.similarity_calculator.calculate(input_text, entry["user_prompt"])
+            print(f"'{input_text}'와(과) '{entry['user_prompt']}'을(를) 비교 중 - 유사도: {similarity}")
+            if similarity > highest_similarity:
+                highest_similarity = similarity
+                best_entry = entry
 
-#     cosine_calculator = SimilarityCalculator(CosineSimilarity())
-#     print(f"코사인 유사도: {cosine_calculator.calculate(sentence1, sentence2):.2f}")
+        if best_entry and highest_similarity >= threshold:
+            print(f"최고 유사도 {highest_similarity}로 가장 유사한 항목 발견: {best_entry}")
+            return best_entry
+
+        print(f"유사도가 {threshold} 이상인 항목을 찾을 수 없습니다. 최고 유사도: {highest_similarity}")
+        return None
