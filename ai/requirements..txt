@@ -1,8 +1,0 @@
-fastapi
-uvicorn
-openai
-python-dotenv
-PIL
-requests
-pydantic
-uuid
