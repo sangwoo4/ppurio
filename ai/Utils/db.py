@@ -87,11 +87,12 @@ class MessageImageService:
         params = None
 
         if category:
-            category_id_query = "SELECT id FROM category WHERE category = %s"
-            category_id = await self.data_service.fetch_data(category_id_query, (category,))
-            if category_id:
+            # category_id_query = "SELECT id FROM category WHERE category = %s"
+            # category_id = await self.data_service.fetch_data(category_id_query, (category,))
+            category_id = self.find_category_id(category)
+            if category_id is not None:
                 query += " WHERE m.category_id = %s"
-                params = (category_id[0]['id'],)
+                params = (category_id,)
             else:
                 self.logger.warning(f"카테고리 '{category}'를 찾을 수 없습니다.")
                 return []
@@ -105,3 +106,21 @@ class MessageImageService:
             return results
 
         return results
+
+# 제가 카테고리마다 매칭된 id 숫자를 몰라서 임의로 배치했습니다.
+# 형이 id와 카테고리가 맞게 매칭되어 있는지 확인 부탁드려요!
+    def find_category_id(self, category: str) -> int:
+        # 카테고리 이름으로 ID를 반환하는 함수
+        category_mapping = {
+            "재난/경고성 문자": 1,
+            "광고/홍보 문자": 2,
+            "정당 선거 문자": 3,
+            "일반 안내 문자": 4,
+            "증권 관련 문자": 5,
+            "실종자 안내 문자": 6,
+            "명함 문자": 7,
+            "부고 정보": 8,
+            "건강 정보": 9
+        }
+        return category_mapping.get(category)
+    
