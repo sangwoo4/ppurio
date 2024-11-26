@@ -20,6 +20,10 @@ const Chatbot = () => {
   const [mood, setMood] = useState([]);
   const [imageUrl, setImageUrl] = useState('');
   const [category, setCategory] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const [isImageIncluded, setIsImageIncluded] = useState(false); // 이미지 포함 여부
 
   const [resultText, setResultText] = useState(null);
@@ -157,6 +161,29 @@ const Chatbot = () => {
     }
   }, [currentStep]);
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/categories`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) {
+          throw new Error("카테고리 데이터를 가져오는 데 실패했습니다.");
+        }
+
+        const result = await response.json();
+        setCategories(result.data); // 응답의 'data' 필드를 상태로 설정
+      } catch (err) {
+        console.error("카테고리 요청 에러:", err);
+      }
+    };
+
+    fetchCategories();
+  }, [API_BASE_URL]);
+
+
 
   const handleCategorySelect = (categorySelected) => {
     setCategory(categorySelected); // 생성 목적 선택
@@ -180,6 +207,8 @@ const Chatbot = () => {
       keyword: keyword,
       category,
     };
+
+    console.log("요청 데이터: ", data);
 
     const textApiUrl = `${API_BASE_URL}/message/generate/text`;
     const imageApiUrl = `${API_BASE_URL}/message/generate/image`;
@@ -324,14 +353,15 @@ const Chatbot = () => {
 
           {currentStep === 1 && (
             <div className="category-selection">
-              <button onClick={() => handleCategorySelect("재난 경고")}>재난 경고</button>
-              <button onClick={() => handleCategorySelect("광고 및 홍보")}>광고 및 홍보</button>
-              <button onClick={() => handleCategorySelect("일반 안내")}>일반 안내</button>
-              <button onClick={() => handleCategorySelect("정당 관련")}>정당 관련</button>
-              <button onClick={() => handleCategorySelect("증권 관련")}>증권 관련</button>
-              <button onClick={() => handleCategorySelect("실종")}>실종</button>
-              <button onClick={() => handleCategorySelect("명함")}>명함</button>
-              <button onClick={() => handleCategorySelect("건강 정보")}>건강 정보</button>
+              {Array.isArray(categories) && categories.length > 0 ? (
+                categories.map((category, index) => (
+                  <button key={index} onClick={() => handleCategorySelect(category)}>
+                    {category}
+                  </button>
+                ))
+              ) : (
+                <p>카테고리를 불러오는 중이거나 데이터가 없습니다.</p>
+              )}
             </div>
           )}
 
@@ -353,7 +383,7 @@ const Chatbot = () => {
         {currentStep === 2 && chatMode === 'text' && (
           <div>
             <label>이미지도 같이 생성할까요? </label>
-            <button onClick={handleImageToggle}>
+            <button onClick={handleImageToggle} className="image-included-button">
               {isImageIncluded ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
             </button>
           </div>
@@ -444,9 +474,6 @@ const Chatbot = () => {
 };
 
 export default Chatbot;
-
-
-
 
 
 
@@ -636,6 +663,8 @@ export default Chatbot;
 //       category,
 //     };
 
+//     console.log("요청 데이터: ", data);
+
 //     const textApiUrl = `${API_BASE_URL}/message/generate/text`;
 //     const imageApiUrl = `${API_BASE_URL}/message/generate/image`;
 
@@ -726,6 +755,24 @@ export default Chatbot;
 //     }
 //   };
 
+//   // 다시 시작 버튼 - 1단계로 초기화
+//   const handleRestart = () => {
+//     setCurrentStep(0); // 단계 초기화 (0번 단계)
+//     setMessages([{ text: "텍스트와 이미지 생성 중 선택해주세요", isBot: true }]); // 초기 메시지 설정
+//     setChatMode(null); // 챗봇 모드 초기화
+//   };
+
+//   // 재생성 버튼 - 기존 내용 그대로 다시 생성
+//   const handleRegenerate = () => {
+//     if (currentStep === 6) {
+//       setMessages((prevMessages) => [
+//         ...prevMessages,
+//         { text: "다시 생성 중입니다...", isBot: true },
+//       ]);
+//       handleGenerateMessage(); // 메시지 생성 함수 호출
+//     }
+//   };
+
 
 //   return (
 //     <div className="chatbot-page">
@@ -750,17 +797,25 @@ export default Chatbot;
 //             </div>
 //           ))}
 
+//           {/* 재시작 또는 재생성 버튼 */}
+//           {currentStep === 6 && (
+//             <div className="re-selection">
+//               <button onClick={handleRegenerate}>다시 생성</button>
+//               <button onClick={handleRestart}>다시 입력</button>
+//             </div>
+//           )}
 
 
 //           {currentStep === 1 && (
 //             <div className="category-selection">
-//               <button onClick={() => handleCategorySelect("재난 경고")}>재난 경고</button>
-//               <button onClick={() => handleCategorySelect("광고 및 홍보")}>광고 및 홍보</button>
-//               <button onClick={() => handleCategorySelect("일반 안내")}>일반 안내</button>
-//               <button onClick={() => handleCategorySelect("정당 관련")}>정당 관련</button>
-//               <button onClick={() => handleCategorySelect("증권 관련")}>증권 관련</button>
-//               <button onClick={() => handleCategorySelect("실종")}>실종</button>
-//               <button onClick={() => handleCategorySelect("명함")}>명함</button>
+//               <button onClick={() => handleCategorySelect("재난/경고성 문자")}>재난/경고성</button>
+//               <button onClick={() => handleCategorySelect("광고/홍보 문자")}>광고 및 홍보</button>
+//               <button onClick={() => handleCategorySelect("정당 선거 문자")}>정당/선거</button>
+//               <button onClick={() => handleCategorySelect("일반 안내 문자")}>일반 안내</button>
+//               <button onClick={() => handleCategorySelect("증권 관련 문자")}>증권 관련</button>
+//               <button onClick={() => handleCategorySelect("실종 안내 문자")}>실종</button>
+//               <button onClick={() => handleCategorySelect("명함 문자")}>명함</button>
+//               <button onClick={() => handleCategorySelect("부고 정보")}>부고</button>
 //               <button onClick={() => handleCategorySelect("건강 정보")}>건강 정보</button>
 //             </div>
 //           )}
@@ -783,7 +838,7 @@ export default Chatbot;
 //         {currentStep === 2 && chatMode === 'text' && (
 //           <div>
 //             <label>이미지도 같이 생성할까요? </label>
-//             <button onClick={handleImageToggle}>
+//             <button onClick={handleImageToggle} className="image-included-button">
 //               {isImageIncluded ? <MdCheckBox /> : <MdCheckBoxOutlineBlank />}
 //             </button>
 //           </div>
@@ -844,10 +899,20 @@ export default Chatbot;
 
 //       <div className="result-container">
 //         <h2>결과 화면</h2>
+//         {/* 텍스트 표시 */}
 //         {resultTxtData || resultImgData ? (
 //           <>
-//             {resultTxtData && <p>{resultTxtData}</p>} {/* 텍스트 표시 */}
-//             {resultImgData && <img src={resultImgData} alt="Generated" style={{ maxWidth: "100%", height: "auto" }} />} {/* 이미지 표시 */}
+//             {resultTxtData &&
+//               <div
+//                 className="message-text"
+//                 dangerouslySetInnerHTML={{
+//                   __html: resultTxtData.replace(/\n/g, "<br>") || "내용이 없습니다.",
+//                 }}
+//               >
+//               </div>}
+//             {/* 이미지 표시 */}
+//             <br />
+//             {resultImgData && <img src={resultImgData} alt="Generated" style={{ maxWidth: "100%", height: "auto" }} />}
 //           </>
 //         ) : (
 //           <p>결과가 여기에 표시됩니다.</p>

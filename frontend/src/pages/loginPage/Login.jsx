@@ -236,7 +236,7 @@ function Login() {
 
         <div className="form-container sign-up">
           <form>
-            <h1>회원가입</h1>
+            <h2>회원가입</h2>
             <span>회원가입을 위한 정보를 입력해주세요.</span>
             <div className="businessNumContainer">
               <input

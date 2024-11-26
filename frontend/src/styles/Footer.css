@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Jua&family=Poor+Story&display=swap');
+
+
 /* background-color: #333;
   color: white;
   text-align: center;
@@ -23,4 +26,6 @@ footer {
   height: auto;
   position: relative;
   /* transform: translateY(100%); */
+  font-family: "Poor Story";
+  font-size: 17px;
 }

@@ -1,9 +1,4 @@
-/* .chatbot-page {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-} */
+@import url('https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Jua&family=Poor+Story&display=swap');
 
 .step-form {
   --hue: 223;
@@ -226,13 +221,15 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  height: 90vh;
+  height: 120vh;
   padding: 20px;
+  font-family: "Poor Story";
+  font-size: 17px;
 }
 
 .chatbot-container {
   width: 30%;
-  max-height: 700px;
+  max-height: 800px;
   border-right: 1px solid #ccc;
   padding: 1em;
   /* height: 50%; */
@@ -310,6 +307,15 @@
   display: flex;
   justify-content: center;
   margin-top: 20px;
+}
+
+
+.image-included-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 8px;
 }
 
 

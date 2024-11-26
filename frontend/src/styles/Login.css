@@ -1,4 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Jua&family=Poor+Story&display=swap');
+
 .login-frame {
+  font-family: "Poor Story";
   background-color: #c9d6ff;
   background: linear-gradient(to right, #e2e2e2, #c9d6ff);
   display: flex;
@@ -20,14 +23,14 @@
 }
 
 .login-container p {
-  font-size: 14px;
+  font-size: 15px;
   line-height: 20px;
   letter-spacing: 0.3px;
   margin: 20px 0;
 }
 
 .login-container span {
-  font-size: 12px;
+  font-size: 15px;
 }
 
 .login-container a {
@@ -73,7 +76,7 @@
   border: none;
   margin: 8px 0;
   padding: 10px 15px;
-  font-size: 13px;
+  font-size: 15px;
   border-radius: 8px;
   width: 90%;
   outline: none;
@@ -218,7 +221,7 @@
   border: none;
   margin: 8px 0;
   padding: 10px 15px;
-  font-size: 13px;
+  font-size: 14px;
   border-radius: 8px;
   width: 80%;
   outline: none;
@@ -228,23 +231,16 @@
 .businessNumContainer {
   width: 80%;
   display: flex;
-  /* 플렉스 박스로 설정하여 요소를 나란히 배치 */
   align-items: center;
-  /* 세로 중앙 정렬 */
 }
 
 .businessNumConfirm {
   cursor: pointer;
   width: 50px;
-  /* 버튼의 너비 조정 */
   height: 100%;
-  /* 부모 컨테이너에 맞추어 높이 설정 */
   display: flex;
-  /* 플렉스 박스 사용 */
   align-items: center;
-  /* 세로 중앙 정렬 */
   justify-content: center;
-  /* 가로 중앙 정렬 */
   color: rgb(0, 0, 0);
 }
 
