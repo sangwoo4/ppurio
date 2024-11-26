@@ -47,6 +47,7 @@ class DataService:
         self.logger = db_logger
 
     async def fetch_data(self, query: str, params: tuple = None):
+        conn = None  # 연결 객체 초기화
         try:
             conn = await self.db_connection.get_connection()
             async with conn.cursor(aiomysql.DictCursor) as cursor:
@@ -61,6 +62,11 @@ class DataService:
         except Exception as e:
             self.logger.error(f"알 수 없는 오류 발생: {str(e)}")
             raise HTTPException(status_code=500, detail="데이터 조회 중 오류가 발생했습니다.")
+        finally:
+            if conn:
+                self.db_connection.pool.release(conn)  # 연결 반환
+                self.logger.info("데이터베이스 연결이 반환되었습니다.")
+
 
 # 메시지와 이미지 데이터를 처리하는 서비스 클래스
 # 카테고리 기반으로 데이터를 조회합니다.
