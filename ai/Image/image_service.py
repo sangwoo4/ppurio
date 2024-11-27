@@ -28,27 +28,32 @@ class ImageService(CommonService):
             self.log_request(request.model_dump())
             self.logger.info("이미지 생성 요청 시작")
 
-            # 데이터베이스 조회
-            db_data = await self._fetch_db_data(request.category)
+            # 데이터베이스에서 카테고리에 해당하는 데이터를 조회
+            db_data = await self._fetch_db_data(request.category or "")
 
+            # 데이터가 없으면 새 이미지를 생성
             if not db_data:
                 self.logger.info("데이터베이스에서 기존 데이터를 찾을 수 없습니다. 새 이미지를 생성합니다.")
                 return await self._generate_new_image(request)
 
             # 유사도 계산 및 기존 이미지 재사용
-            similar_entry = similarity_service.find_similar_entry(request.text, db_data)
-            if similar_entry:
-                self.logger.info(f"유사한 이미지 발견. URL: {similar_entry['image_url']}")
-                
-                # 랜덤 대기 시간 적용
-                delay = random.uniform(4, 6)
-                self.logger.info(f"랜덤 대기 시간 적용 중: {delay:.2f}초")
-                await asyncio.sleep(delay)
-                self.logger.info("랜덤 대기 시간이 완료되었습니다.")
-                
-                return ImageCreateResponse(url=similar_entry["image_url"])
+            if request.text:
+                similar_entry = similarity_service.find_most_similar(request.text, db_data)
+                if similar_entry:
+                    self.logger.info(f"유사한 이미지 발견. URL: {similar_entry['image_url']}")
 
-            self.logger.info("유사한 이미지가 없어 새 이미지를 생성합니다.")
+                    # 랜덤 대기 시간 적용
+                    delay = random.uniform(4, 6)
+                    self.logger.info(f"랜덤 대기 시간 적용 중: {delay:.2f}초")
+                    await asyncio.sleep(delay)
+                    self.logger.info("랜덤 대기 시간이 완료되었습니다.")
+
+                    return ImageCreateResponse(url=similar_entry["image_url"])
+                else:
+                    self.logger.info("유사한 이미지를 찾지 못했습니다. 새 이미지를 생성합니다.")
+            else:
+                self.logger.warning("요청 텍스트가 비어 있습니다. 새 이미지를 생성합니다.")
+
             return await self._generate_new_image(request)
 
         except Exception as e:
@@ -62,7 +67,8 @@ class ImageService(CommonService):
             self.logger.info("새로운 이미지를 생성합니다.")
             category_description = self.validate_category(
                 request.category, CategoryDescription.CATEGORY_DESCRIPTIONS_IMAGE
-            )
+            ) or "General category for image creation"
+
             self.logger.info(f"카테고리 설명: {category_description}")
 
             # 프롬프트 생성
@@ -76,7 +82,7 @@ class ImageService(CommonService):
             self.logger.error(f"새로운 이미지 생성 중 오류 발생: {str(e)}", exc_info=True)
             raise
 
-    # 이미지 생성은 요청된 텍스트, 키워드, 업종, 분위기 및 카테고리 설명을 바탕으로 생성.
+    # 이미지 생성은 요청된 텍스트, 키워드, 업종, 분위기 및 카테고리 설명을 바탕으로 생성
     def _create_prompt(self, request: ImageCreateRequest, category_description: str) -> str:
         return (
                 "Create a photorealistic and visually compelling image that reflects the following details while avoiding any form of text, numbers, symbols, or letters in the image.\n"
@@ -90,7 +96,7 @@ class ImageService(CommonService):
                 "The output should be a high-quality image with precise details and artistic depth, capturing the requested scene and emotions perfectly.\n"
         )
 
-    # OpenAI API를 호출하여 이미지를 생성하고, 생성된 이미지의 URL을 반환합니다.
+    # OpenAI API를 호출하여 이미지를 생성하고, 생성된 이미지의 URL을 반환
     async def _call_openai_api(self, prompt: str) -> str:
         self.logger.info("OpenAI API를 호출하여 이미지를 생성합니다.")
         try:
@@ -106,11 +112,15 @@ class ImageService(CommonService):
             self.logger.error(f"OpenAI API 호출 중 오류 발생: {str(e)}", exc_info=True)
             raise
 
-    # 데이터베이스에서 지정된 카테고리에 해당하는 메시지 및 이미지 데이터를 조회합니다.
+    # 데이터베이스에서 메시지 및 이미지 데이터를 조회
     async def _fetch_db_data(self, category: str):
         try:
             self.logger.info(f"카테고리 '{category}'에 대해 데이터베이스 조회를 시작합니다.")
             db_data = await self.message_image_service.fetch_message_and_image(category)
+            if db_data:
+                self.logger.info(f"조회된 데이터베이스 결과: {len(db_data)}개 항목")
+            else:
+                self.logger.warning("데이터베이스 조회 결과가 비어 있습니다.")
             return db_data
         except Exception as e:
             self.logger.error(f"데이터베이스 조회 중 오류 발생: {str(e)}", exc_info=True)

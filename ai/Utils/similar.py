@@ -38,20 +38,24 @@ class SimilarityService:
     def __init__(self, strategy: SimilarityStrategy):
         self.similarity_calculator = SimilarityCalculator(strategy)
 
-    def find_similar_entry(self, input_text: str, db_data: list, threshold: float = 0.65) -> dict:
+    # 입력 텍스트와 데이터베이스 항목 중 가장 유사한 항목을 반환합니다.
+    def find_most_similar(self, input_text: str, db_data: list, threshold: float = 0.65) -> dict:
         highest_similarity = 0
         best_entry = None
 
         for entry in db_data:
             similarity = self.similarity_calculator.calculate(input_text, entry["user_prompt"])
-            print(f"'{input_text}'와(과) '{entry['user_prompt']}'을(를) 비교 중 - 유사도: {similarity}")
+            print(f"'{input_text}'와(과) '{entry['user_prompt']}'을(를) 비교 중 - 유사도: {similarity:.6f}")
             if similarity > highest_similarity:
                 highest_similarity = similarity
                 best_entry = entry
+                if similarity >= 1.0:
+                    print("최대 유사도를 발견하여 루프를 종료합니다.")
+                    break
 
         if best_entry and highest_similarity >= threshold:
-            print(f"최고 유사도 {highest_similarity}로 가장 유사한 항목 발견: {best_entry}")
+            print(f"최고 유사도 {highest_similarity:.6f}로 가장 유사한 항목 발견: {best_entry}")
             return best_entry
 
-        print(f"유사도가 {threshold} 이상인 항목을 찾을 수 없습니다. 최고 유사도: {highest_similarity}")
+        print(f"유사도가 {threshold} 이상인 항목을 찾을 수 없습니다. 최고 유사도: {highest_similarity:.6f}")
         return None

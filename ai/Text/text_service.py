@@ -19,7 +19,7 @@ class TextService(CommonService):
             self.logger.info("문자 생성 요청 시작")
 
             # 카테고리 설명 확장
-            category_description = self._get_category_description(request.category)
+            category_description = self._get_category_description(request.category or "")
             self.logger.info(f"카테고리 설명: {category_description}")
 
             # 프롬프트 생성 및 OpenAI API 호출
@@ -58,7 +58,8 @@ class TextService(CommonService):
                     f"카테고리: {category_description}\n"
                     "전달받은 업종명, 분위기, 카테고리를 고려하여 적절한 문자 메세지를 작성해주세요.\n"
                     "문자 메시지는 간결하고 명확해야 하며, 300자 이내로 작성해주세요.\n"
-                    "추가적으로 문자 메시지는 읽는 사람이 즉시 이해할 수 있도록 작성되어야 합니다."
+                    "추가적으로 문자 메시지는 읽는 사람이 즉시 이해할 수 있도록 작성되어야 합니다.\n"
+                    "마지막으로 특수 이모티콘 및 이모티콘은 절대 사용하지 마세요"
                 ),
             },
         ]

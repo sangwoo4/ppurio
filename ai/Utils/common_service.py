@@ -1,3 +1,4 @@
+# common_service.py
 import logging
 from fastapi import HTTPException
 
@@ -37,9 +38,9 @@ class CommonService:
         self.logger.error(f"API Error: {error}")
         raise HTTPException(status_code=500, detail=f"API Error: {error}")
 
-    # 주어진 카테고리를 카테고리 맵에서 검증합니다.
-    def validate_category(self, category, category_map):
-        validated_category = category_map.get(category)
-        if not validated_category:
-            self.logger.warning(f"Invalid category: {category}")
-        return validated_category or category
+    # 카테고리 검증 로직에서 기본값 반환 추가
+    def validate_category(self, category: str, category_map: dict) -> str:
+        if not category:  # 카테고리가 없는 경우
+            self.logger.info("카테고리가 제공되지 않았습니다. 기본값을 사용합니다.")
+            return ""
+        return category_map.get(category, "")
