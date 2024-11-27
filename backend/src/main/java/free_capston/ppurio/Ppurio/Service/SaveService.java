@@ -5,14 +5,13 @@ import free_capston.ppurio.Repository.CategoryRepository;
 import free_capston.ppurio.Repository.ImageRepository;
 import free_capston.ppurio.Repository.MessageRepository;
 import free_capston.ppurio.Repository.UserRepository;
+import free_capston.ppurio.Util.ResponseDto;
 import free_capston.ppurio.model.Category;
 import free_capston.ppurio.model.Image;
 import free_capston.ppurio.model.Message;
 import free_capston.ppurio.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -54,28 +53,61 @@ public class SaveService {
                     imageRepository.save(image); // Message와 연관된 Image 저장
                 }
             });
-        } else {
-            // Files가 null 또는 비어있을 때 로직 (필요하면 추가)
-            System.out.println("No files provided for the message.");
         }
 
     }
 
+//    public Message buildMessageEntity(SendMessageDto sendMessageDto, User user) {
+//        // Category 이름으로 이미 존재하는 Category 엔티티 조회 (없으면 null 처리)
+//        Category categoryEntity = null;
+//        if (sendMessageDto.getCategory() != null && !sendMessageDto.getCategory().isEmpty()) {
+//            categoryEntity = categoryRepository.findByCategory(sendMessageDto.getCategory())
+//                    .orElseThrow(() -> new IllegalArgumentException("Category not found: " + sendMessageDto.getCategory()));
+//        }
+//
+//        // Message 객체 빌드
+//        return Message.builder()
+//                .messageContent(sendMessageDto.getContent()) // SendMessageDto에서 content 가져옴
+//                .user(user) // 전달받은 User 객체
+//                .prompt(sendMessageDto.getPrompt()) // SendMessageDto에서 prompt 가져옴
+//                .category(categoryEntity) // categoryEntity가 null일 수도 있음
+//                .build();
+//    }
+
     public Message buildMessageEntity(SendMessageDto sendMessageDto, User user) {
-        // Category 이름으로 이미 존재하는 Category 엔티티 조회 (없으면 null 처리)
-        Category categoryEntity = null;
-        if (sendMessageDto.getCategory() != null && !sendMessageDto.getCategory().isEmpty()) {
-            categoryEntity = categoryRepository.findByCategory(sendMessageDto.getCategory())
-                    .orElseThrow(() -> new IllegalArgumentException("Category not found: " + sendMessageDto.getCategory()));
+        try {
+            // 1. 입력값 검증
+            validateSendMessageDto(sendMessageDto);
+
+            // 2. Category 이름으로 이미 존재하는 Category 엔티티 조회
+            Category categoryEntity = null;
+            if (sendMessageDto.getCategory() != null && !sendMessageDto.getCategory().isEmpty()) {
+                categoryEntity = categoryRepository.findByCategory(sendMessageDto.getCategory())
+                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리: " + sendMessageDto.getCategory()));
+            }
+
+            // 3. Message 객체 빌드
+            return Message.builder()
+                    .messageContent(sendMessageDto.getContent()) // SendMessageDto에서 content 가져옴
+                    .user(user) // 전달받은 User 객체
+                    .prompt(sendMessageDto.getPrompt()) // SendMessageDto에서 prompt 가져옴
+                    .category(categoryEntity) // categoryEntity가 null일 수도 있음
+                    .build();
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("메시지 생성 중 입력값 오류: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("메시지 생성 중 알 수 없는 오류 발생: " + e.getMessage(), e);
+        }
+    }
+
+    private void validateSendMessageDto(SendMessageDto sendMessageDto) {
+        if (sendMessageDto.getContent() == null || sendMessageDto.getContent().trim().isEmpty()) {
+            throw new IllegalArgumentException("메시지 내용은 필수 항목입니다.");
         }
 
-        // Message 객체 빌드
-        return Message.builder()
-                .messageContent(sendMessageDto.getContent()) // SendMessageDto에서 content 가져옴
-                .user(user) // 전달받은 User 객체
-                .prompt(sendMessageDto.getPrompt()) // SendMessageDto에서 prompt 가져옴
-                .category(categoryEntity) // categoryEntity가 null일 수도 있음
-                .build();
+        if (sendMessageDto.getPrompt() == null || sendMessageDto.getPrompt().trim().isEmpty()) {
+            throw new IllegalArgumentException("프롬프트는 필수 항목입니다.");
+        }
     }
 
     // Image 엔티티 생성
