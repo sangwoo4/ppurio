@@ -29,17 +29,17 @@ public class MessageService {
     private String aiTextAndImageUrl;
 
 
-    public ResponseAiTextDto generateAiText(GenerateMessageDto generateMessageDto) {
+    public ResponseAiTextDto generateAiText(GenerateMessageDto generateMessageDto) throws Exception {
         RequestAiMessageDto requestAiMessageDto = setRequestAiMessageDto(new RequestAiMessageDto(), generateMessageDto);
         return textStrategy.generateMessage(requestAiMessageDto, aiTextUrl);
     }
 
-    public ResponseAiImageDto generateAiImage(GenerateMessageDto generateMessageDto) {
+    public ResponseAiImageDto generateAiImage(GenerateMessageDto generateMessageDto) throws Exception {
         RequestAiMessageDto requestAiMessageDto = setRequestAiMessageDto(new RequestAiMessageDto(), generateMessageDto);
         return imageStrategy.generateMessage(requestAiMessageDto, aiImageUrl);
     }
 
-    public ResponseAiTextAndMessageDto generateAiTextAndImage(GenerateMessageDto generateMessageDto) {
+    public ResponseAiTextAndMessageDto generateAiTextAndImage(GenerateMessageDto generateMessageDto) throws Exception {
         RequestAiMessageDto requestAiMessageDto = setRequestAiMessageDto(new RequestAiMessageDto(), generateMessageDto);
         return textAndMessageStrategy.generateMessage(requestAiMessageDto, aiTextAndImageUrl);
     }

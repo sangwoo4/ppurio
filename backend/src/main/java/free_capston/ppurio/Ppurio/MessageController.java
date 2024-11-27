@@ -33,22 +33,22 @@ public class MessageController {
     }
 
     @PostMapping("/generate/text")
-    public ResponseDto<?> generateText(@RequestBody GenerateMessageDto generateMessageDto){
+    public ResponseDto<?> generateText(@RequestBody GenerateMessageDto generateMessageDto) throws Exception {
         ResponseAiTextDto responseAiTextDto = messageService.generateAiText(generateMessageDto);
         return ResponseDto.setSuccessData("메세지 생성 성공", responseAiTextDto);
     }
 
     @PostMapping("/generate/image")
-    public ResponseDto<?> generateImage(@RequestBody GenerateMessageDto generateMessageDto){
+    public ResponseDto<?> generateImage(@RequestBody GenerateMessageDto generateMessageDto) throws Exception {
         ResponseAiImageDto responseAiTextDto = messageService.generateAiImage(generateMessageDto);
         return ResponseDto.setSuccessData("메세지, 이미지 생성 성공", responseAiTextDto);
     }
 
-    @PostMapping("/generate/textAndImage")
-    public ResponseDto<?> generateTextAndImage(@RequestBody GenerateMessageDto generateMessageDto){
-        ResponseAiTextAndMessageDto responseAiTextDto = messageService.generateAiTextAndImage(generateMessageDto);
-        return ResponseDto.setSuccessData("메세지, 이미지 생성 성공", responseAiTextDto);
-    }
+//    @PostMapping("/generate/textAndImage")
+//    public ResponseDto<?> generateTextAndImage(@RequestBody GenerateMessageDto generateMessageDto){
+//        ResponseAiTextAndMessageDto responseAiTextDto = messageService.generateAiTextAndImage(generateMessageDto);
+//        return ResponseDto.setSuccessData("메세지, 이미지 생성 성공", responseAiTextDto);
+//    }
 
 
 }
