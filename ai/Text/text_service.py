@@ -70,11 +70,11 @@ class TextService(CommonService):
             response = await openai_client_instance.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=messages,
-                max_tokens=350,
-                temperature=1.0,
-                top_p=0.5,
-                frequency_penalty=0.5,
-                presence_penalty=0.5,
+                max_tokens=500,
+                temperature=1.2,
+                top_p=0.8,
+                frequency_penalty=0.6,
+                presence_penalty=0.8,
             )
             return response.choices[0].message.content.strip()
         except Exception as e:
