@@ -21,11 +21,11 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "message_id", nullable = false)
+    private Message message;
+
     @Column(nullable = false)
     private String url;
-
-    @JsonIgnore
-    @ManyToMany(mappedBy = "images", cascade = CascadeType.REMOVE)
-    private Set<Message> messages = new HashSet<>();
 
 }

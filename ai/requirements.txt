@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+aiomysql
+pydantic
+python-dotenv
+openai
+scikit-learn
+pecab

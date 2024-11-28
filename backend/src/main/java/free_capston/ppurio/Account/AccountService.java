@@ -2,7 +2,7 @@ package free_capston.ppurio.Account;
 
 import free_capston.ppurio.Account.Dto.LoginDto;
 import free_capston.ppurio.Account.Dto.LoginResponseDto;
-import free_capston.ppurio.Dto.ResponseDto;
+import free_capston.ppurio.Util.ResponseDto;
 import free_capston.ppurio.Account.Dto.SignUpDto;
 import free_capston.ppurio.Repository.UserRepository;
 import free_capston.ppurio.model.User;
@@ -16,11 +16,21 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AccountService {
     private final UserRepository userRepository;
-    @Transactional
+//    @Transactional
+//    public ResponseDto<?> signUp(SignUpDto signUpDto){
+//        User user = buildUserEntity(signUpDto);
+//        userRepository.save(user);
+//        return ResponseDto.setSuccess("회원 생성 성공");
+//    }
+
     public ResponseDto<?> signUp(SignUpDto signUpDto){
-        User user = buildUserEntity(signUpDto);
-        userRepository.save(user);
-        return ResponseDto.setSuccess("회원 생성 성공");
+        try{
+            User user = buildUserEntity(signUpDto);
+            userRepository.save(user);
+            return ResponseDto.setSuccess("회원생성 성공");
+        } catch (Exception e){
+            return ResponseDto.setFailed("회원 생성 실패");
+        }
     }
 
     @Transactional(readOnly = true)
@@ -30,7 +40,7 @@ public class AccountService {
             return ResponseDto.setFailed("해당 이메일의 사용자가 존재하지 않습니다.");
         }
         Boolean loginResult = matchingPassword(user.get().getPassword(), loginDto.getPassword());
-        Long userId = user.get().getUserId();
+        Long userId = user.get().getId();
 
         if (loginResult) {
             LoginResponseDto userIdDto = new LoginResponseDto(userId);

@@ -25,13 +25,14 @@ public class RequestService {
     private static final String API_KEY = "2044bc5c49751a3951dc0e39cf1a512996b2a69dcce1f6fbb8d22e7f56fd7e95";
     private static final Integer TIME_OUT = 5000;
     private static final String FROM = "01051454202";
+    private static final String duplicateFlag = "N";
+    private static final String refkey = "refKey";
 
 
 
     public void requestSend(SendMessageDto sendMessageDto){
         String basicAuthorization = Base64.getEncoder().encodeToString((PPURIO_ACCOUNT + ":" + API_KEY).getBytes());
         Map<String, Object> tokenResponse = getToken(URI, basicAuthorization);
-//        Map<String, Object> sendResponse = send(URI, (String) tokenResponse.get("token"), sendMessageDto);
         send(URI, (String) tokenResponse.get("token"), sendMessageDto);
     }
 
@@ -41,7 +42,7 @@ public class RequestService {
         try {
             String bearerAuthorization = String.format("%s %s", "Bearer", accessToken);
             Request request = new Request(baseUri + "/v1/message", bearerAuthorization);
-            System.out.println("Files in SendMessageDto: " + sendMessageDto.getFiles());
+
             // createSendTestParams를 호출하여 필요한 파라미터를 생성
             Map<String, Object> params = createSendTestParams(sendMessageDto);
 
@@ -85,19 +86,20 @@ public class RequestService {
 
     private Map<String, Object> createSendTestParams(SendMessageDto sendMessageDto) throws IOException {
         HashMap<String, Object> params = new HashMap<>();
-        System.out.println("sendMessageDto: " + sendMessageDto);
 
         // 기존 필드 설정
         params.put("account", sendMessageDto.getAccount());
         params.put("messageType", sendMessageDto.getMessageType());
         params.put("from", FROM);
         params.put("content", sendMessageDto.getContent());
-        params.put("duplicateFlag", sendMessageDto.getDuplicateFlag());
+        params.put("duplicateFlag", duplicateFlag);
         params.put("targetCount", sendMessageDto.getTargetCount());
         params.put("targets", sendMessageDto.getTargets());
-        params.put("refKey", sendMessageDto.getRefKey());
+        params.put("refKey", refkey);
 
-        if (sendMessageDto.getFiles() != null) {
+        // files 필드 처리
+        if (sendMessageDto.getFiles() != null && !sendMessageDto.getFiles().isEmpty()) {
+            // files가 null이 아니고 비어있지 않으면 처리
             List<Map<String, Object>> fileParamsList = sendMessageDto.getFiles().stream()
                     .map(fileUrl -> {
                         try {

@@ -1,0 +1,46 @@
+
+services:
+  spring:
+    build:
+      context: ./backend
+    container_name: backend-container
+    networks: 
+      - docker-network
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ppurio
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234
+    depends_on:
+      - mysql
+
+  fastapi:
+    build:
+      context: ./ai
+      dockerfile: Dockerfile
+    container_name: fastapi-container
+    ports:
+      - "8000:8000"
+    networks:
+      - docker-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    networks:
+      - docker-network
+    environment:
+      MYSQL_DATABASE: ppurio
+      MYSQL_ROOT_PASSWORD: 1234
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+networks:
+  docker-network:
+    driver: bridge
+
+volumes:
+  mysql-data:

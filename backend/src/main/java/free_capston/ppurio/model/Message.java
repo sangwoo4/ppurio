@@ -22,16 +22,17 @@ public class Message {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = true)
+    private Category category;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "imageList",
-            joinColumns = @JoinColumn(name ="message_id"),
-            inverseJoinColumns = @JoinColumn(name = "image_id")
-    )
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Image> images = new HashSet<>();
 
     @Column(columnDefinition = "TEXT")
     private String messageContent;
+
+    @Column(columnDefinition = "TEXT", name = "prompt")
+    private String prompt;
 
 }

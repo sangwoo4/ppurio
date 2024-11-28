@@ -1,5 +1,7 @@
 package free_capston.ppurio.Util;
 
+import free_capston.ppurio.Ppurio.Dto.FileDto;
+import free_capston.ppurio.Ppurio.Dto.SendMessageDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -9,10 +11,16 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -34,8 +42,8 @@ public class S3Service {
     }
 
     public String uploadFile(InputStream inputStream, String fileName, String contentType) throws IOException {
-        String uniqueFileName = UUID.randomUUID() + "_" + fileName;
-
+//        String uniqueFileName = UUID.randomUUID() + "_" + fileName;
+        String uniqueFileName = String.valueOf(UUID.randomUUID()) + ".jpg";
         long contentLength = inputStream.available();
         if (contentLength <= 0) {
             throw new IOException("Input stream is empty or could not determine the size.");
@@ -51,4 +59,5 @@ public class S3Service {
         // URL을 올바르게 인코딩
         return String.format("%s%s", s3Url, URLEncoder.encode(uniqueFileName, StandardCharsets.UTF_8));
     }
+
 }
