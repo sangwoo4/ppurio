@@ -35,7 +35,6 @@ dependencies {
 	implementation 'software.amazon.awssdk:s3:2.20.41'
 	testImplementation 'org.springframework:spring-test:5.3.23' // 사용 중인 Spring 버전에 맞게 변경하세요
 	implementation 'commons-fileupload:commons-fileupload:1.4'
-//	implementation 'org.springframework.cloud:spring-cloud-starter-aws'
 }
 
 tasks.named('test') {

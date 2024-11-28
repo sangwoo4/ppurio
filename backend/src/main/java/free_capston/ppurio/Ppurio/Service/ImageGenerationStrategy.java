@@ -93,7 +93,7 @@ public class ImageGenerationStrategy implements MessageGenerationStrategy<Respon
                 String base64Image = Base64.getEncoder().encodeToString(imageBytes);
 
                 // 해당 이미지 형식에 맞는 data URL 형식으로 변경 (예: image/webp)
-                String dataUrl = "data:image/webp;base64," + base64Image;
+                String dataUrl = "data:image/jpeg;base64," + base64Image;
                 return dataUrl;
             }
         } catch (Exception e) {
