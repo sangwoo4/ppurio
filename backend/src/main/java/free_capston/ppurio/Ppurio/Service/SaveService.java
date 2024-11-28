@@ -104,10 +104,10 @@ public class SaveService {
         if (sendMessageDto.getContent() == null || sendMessageDto.getContent().trim().isEmpty()) {
             throw new IllegalArgumentException("메시지 내용은 필수 항목입니다.");
         }
-
-        if (sendMessageDto.getPrompt() == null || sendMessageDto.getPrompt().trim().isEmpty()) {
-            throw new IllegalArgumentException("프롬프트는 필수 항목입니다.");
-        }
+//
+//        if (sendMessageDto.getPrompt() == null || sendMessageDto.getPrompt().trim().isEmpty()) {
+//            throw new IllegalArgumentException("프롬프트는 필수 항목입니다.");
+//        }
     }
 
     // Image 엔티티 생성
