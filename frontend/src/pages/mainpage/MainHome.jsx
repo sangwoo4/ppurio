@@ -5,11 +5,22 @@ import "../../styles/MainHome.css";
 import mainColor from "../../assets/maincolor.png";
 import mainImage1 from "../../assets/mainImage1.png"; // 첫 번째 이미지 경로
 import mainImage2 from "../../assets/mainImage2.png"; // 두 번째 이미지 경로
+import { useUser } from "../../hooks/UserContext";
 
 const MainHome = () => {
   const navigate = useNavigate();
   const [text, setText] = useState(""); // 출력되는 텍스트 상태
   const [imageIndex, setImageIndex] = useState(0); // 현재 이미지 인덱스 상태
+  const { userId, setUserId } = useUser();
+
+  // 유저 id 설정 불러오기
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUserId(storedUserId);
+    }
+  }, [setUserId]);
+
 
   // 각 텍스트 문구
   const fullTexts = [
@@ -34,7 +45,14 @@ const MainHome = () => {
   const images = [mainImage1, mainImage2]; // 이미지를 배열로 설정
 
   const handleButtonClick = () => {
-    navigate("/login"); // 버튼 클릭 시 /login 페이지로 이동
+    if (!userId) {
+      // userId가 없으면 로그인 후 이용 가능하다는 알림을 먼저 띄우고 로그인 페이지로 이동
+      alert("로그인 후 이용 가능합니다!");
+      navigate("/login");
+    } else {
+      // userId가 있으면 챗봇 페이지로 이동
+      navigate("/chatbot");
+    }
   };
 
   useEffect(() => {
