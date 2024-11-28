@@ -16,11 +16,21 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AccountService {
     private final UserRepository userRepository;
-    @Transactional
+//    @Transactional
+//    public ResponseDto<?> signUp(SignUpDto signUpDto){
+//        User user = buildUserEntity(signUpDto);
+//        userRepository.save(user);
+//        return ResponseDto.setSuccess("회원 생성 성공");
+//    }
+
     public ResponseDto<?> signUp(SignUpDto signUpDto){
-        User user = buildUserEntity(signUpDto);
-        userRepository.save(user);
-        return ResponseDto.setSuccess("회원 생성 성공");
+        try{
+            User user = buildUserEntity(signUpDto);
+            userRepository.save(user);
+            return ResponseDto.setSuccess("회원생성 성공");
+        } catch (Exception e){
+            return ResponseDto.setFailed("회원 생성 실패");
+        }
     }
 
     @Transactional(readOnly = true)

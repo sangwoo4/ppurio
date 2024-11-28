@@ -8,17 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.awt.image.WritableRenderedImage;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ImageService {
+
     private final ImageRepository imageRepository;
     private final S3Service s3Service;
 
@@ -28,13 +31,17 @@ public class ImageService {
         this.imageRepository = imageRepository;
     }
 
+    static {
+            ImageIO.scanForPlugins();
+    }
+
     public List<String> changeUrlAndUploadImages(SendMessageDto sendMessageDto) {
         List<String> uploadedUrls = new ArrayList<>();
         if (sendMessageDto.getFiles() != null && !sendMessageDto.getFiles().isEmpty()) {
             for (FileDto fileDto : sendMessageDto.getFiles()) {
                 String fileUrl = fileDto.getFileUrl();
                 try {
-                    String newUrl = uploadFileToS3(fileUrl);
+                    String newUrl = uploadBase64ToS3(fileUrl);
                     uploadedUrls.add(newUrl);
                 } catch (IOException e) {
                     System.err.println("파일 업로드 중 오류 발생: " + e.getMessage());
@@ -44,47 +51,49 @@ public class ImageService {
         return uploadedUrls;
     }
 
-    private String uploadFileToS3(String fileUrl) throws IOException {
-        URL url = new URL(fileUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.connect();
+    private String cleanBase64Data(String base64Data){
+        if(base64Data.startsWith("data:image/")){
+            int commaIndex = base64Data.indexOf(',');
+            return commaIndex > 0 ? base64Data.substring((commaIndex + 1)) : base64Data;
+        }
+        return base64Data;
+    }
 
-        if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            throw new IOException("Failed to download file: " + fileUrl + " with response code: " + connection.getResponseCode());
+    public String uploadBase64ToS3(String base64Data) throws IOException {
+        base64Data = cleanBase64Data(base64Data);
+
+        if(base64Data == null || base64Data.isEmpty()){
+            throw new IllegalArgumentException("Base 64 데이터가 없습니다.");
         }
 
-        String fileName = extractFileName(fileUrl);
-        if (!fileName.endsWith(".jpg")) {
-            fileName = fileName.replace(".png", "") + ".jpg";  // 확장자를 .jpg로 변경하고 추가
-        }
-        String contentType = "image/jpeg";  // 이미지 타입을 JPG로 설정
+        byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
+        try(ByteArrayInputStream inputStream = new ByteArrayInputStream(decodedBytes)){
+            BufferedImage inputImage = ImageIO.read(inputStream);
+            if(inputImage == null){
+                throw new IOException("이미지 디코딩 실패");
+            }
 
-        // PNG 이미지를 BufferedImage로 로드
-        BufferedImage pngImage = ImageIO.read(connection.getInputStream());
+            String fileName = UUID.randomUUID() + ".jpg";
+            String contentType = "image/jpeg";
 
-        // JPG 이미지로 변환
-        BufferedImage jpgImage = new BufferedImage(
-                pngImage.getWidth(),
-                pngImage.getHeight(),
-                BufferedImage.TYPE_INT_RGB
-        );
-        jpgImage.createGraphics().drawImage(pngImage, 0, 0, null);
+            try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream()){
+                ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+                try(ImageOutputStream ios = ImageIO.createImageOutputStream(outputStream)){
+                    writer.setOutput(ios);
+                    ImageWriteParam writeParam = writer.getDefaultWriteParam();
+                    writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 
-        // JPG 이미지 바이트 배열로 변환
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            ImageIO.write(jpgImage, "jpg", outputStream);
-            byte[] jpgBytes = outputStream.toByteArray();
+                    writer.write(null, new javax.imageio.IIOImage(inputImage, null, null), writeParam);
+                    writer.dispose();
+                }
+                return s3Service.uploadFile(new ByteArrayInputStream(outputStream.toByteArray()), fileName, contentType);
+            }
 
-            // S3에 업로드
-            return s3Service.uploadFile(new ByteArrayInputStream(jpgBytes), fileName, contentType);
         }
     }
 
-    private String extractFileName(String fileUrl) {
-        return fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
-    }
 
+    // SendMessageDto에 파일 URL 업데이트
     public SendMessageDto updateFileUrls(SendMessageDto sendMessageDto, List<String> newUrls) {
         if (sendMessageDto.getFiles() != null && !sendMessageDto.getFiles().isEmpty()) {
             for (int i = 0; i < sendMessageDto.getFiles().size(); i++) {
