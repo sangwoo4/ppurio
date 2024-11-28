@@ -56,8 +56,8 @@ public class ImageGenerationStrategy implements MessageGenerationStrategy<Respon
 //    }
 
     public ResponseAiImageDto generateMessage(RequestAiMessageDto requestAiMessageDto, String apiUrl) throws Exception {
-        System.out.println("apiUrl: " + apiUrl);
-        System.out.println("전송할 요청 DTO: " + requestAiMessageDto); // 요청 DTO 로그
+//        System.out.println("apiUrl: " + apiUrl);
+//        System.out.println("전송할 요청 DTO: " + requestAiMessageDto); // 요청 DTO 로그
 
         ResponseEntity<ResponseAiImageDto> responseEntity = restTemplate.postForEntity(apiUrl, requestAiMessageDto, ResponseAiImageDto.class);
         System.out.println("responseEntity: " + responseEntity);
@@ -71,7 +71,14 @@ public class ImageGenerationStrategy implements MessageGenerationStrategy<Respon
 
             // URL 변경
             responseAiImageDto.setUrl(newUrl);
-            System.out.println("변경 후 URL: " + responseAiImageDto.getUrl());
+            String url = responseAiImageDto.getUrl();
+
+            if (url != null && url.length() > 20) {
+                String shortenedUrl = url.substring(0, 20) + "..." + url.substring(url.length() - 20);
+                System.out.println("변경 후 URL: " + shortenedUrl);
+            } else {
+                System.out.println("변경 후 URL: " + url);
+            }
 
             return responseAiImageDto;
         } else {
