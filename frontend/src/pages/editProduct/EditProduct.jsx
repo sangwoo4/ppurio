@@ -15,12 +15,20 @@ const EditProduct = () => {
   const [popupImage, setPopupImage] = useState(null);
   const imageEditorRef = useRef(null);
 
+  const [text, setText] = useState(null);
+  const [userText, setUserText] = useState(null);
+  const [category, setCategory] = useState(null);
+
   useEffect(() => {
     if (location.state) {
       if (location.state.imageSrc) {
         setImageSrc(location.state.imageSrc);
       }
       console.log("Received Image Source:", location.state.imageSrc);
+
+      setText(location.state.text);
+      setUserText(location.state.userText);
+      setCategory(location.state.category);
     }
   }, [location.state]);
 
@@ -91,6 +99,9 @@ const EditProduct = () => {
       navigate("/send/message", {
         state: {
           editImage: editImage[0],
+          text,
+          userText,
+          category
         },
       });
     } else {

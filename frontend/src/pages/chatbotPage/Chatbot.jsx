@@ -318,7 +318,7 @@ const Chatbot = () => {
 
   const handleEdit = () => {
     if (resultImgData) {
-      navigate('/edit/product', { state: { imageSrc: resultImgData } }); // EditProduct로 이미지 결과만 전달
+      navigate('/edit/product', { state: { imageSrc: resultImgData, text: resultTxtData, userText: resultText, category: resultCategory } }); // EditProduct로 이미지 결과만 전달
     }
   };
 
