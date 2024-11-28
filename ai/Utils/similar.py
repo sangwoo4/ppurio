@@ -26,7 +26,6 @@ class SimilarityStrategy(ABC):
 class CosineSimilarity(SimilarityStrategy):
     def __init__(self):
         similar_logger.info("CosineSimilarity 전략 초기화 완료.")
-
     def calculate_similarity(self, sentence1: str, sentence2: str) -> float:
         similar_logger.debug(f"입력 문장1: {sentence1}")
         similar_logger.debug(f"입력 문장2: {sentence2}")
@@ -38,8 +37,10 @@ class CosineSimilarity(SimilarityStrategy):
         vectors = vectorizer.fit_transform([tokenized_sentence1, tokenized_sentence2])
         similarity = cosine_similarity(vectors[0], vectors[1])[0][0]
 
-        similar_logger.info(f"'{sentence1}'와(과) '{sentence2}'의 유사도: {similarity:.6f}")
-        return similarity
+        # 유사도 결과에 0.5를 더함
+        adjusted_similarity = similarity + 0.4
+        similar_logger.info(f"'{sentence1}'와(과) '{sentence2}'의 조정된 유사도: {adjusted_similarity:.6f}")
+        return adjusted_similarity
 
 # 유사도 계산기를 관리하는 클래스
 class SimilarityCalculator:
@@ -53,6 +54,7 @@ class SimilarityCalculator:
         similar_logger.debug(f"유사도 계산 결과: {similarity:.6f}")
         return similarity
 
+
 # 유사도 서비스 클래스
 class SimilarityService:
     def __init__(self, strategy: SimilarityStrategy):
@@ -60,25 +62,25 @@ class SimilarityService:
         similar_logger.info("SimilarityService 초기화 완료.")
 
     # 입력 텍스트와 데이터베이스 항목 중 가장 유사한 항목을 반환합니다.
-    def find_most_similar(self, input_text: str, db_data: list, threshold: float = 0.65) -> dict:
+    def find_most_similar(self, input_text: str, db_data: list, threshold: float = 0.8) -> dict:
         similar_logger.info(f"입력 텍스트: {input_text}")
         similar_logger.info(f"데이터베이스 항목 수: {len(db_data)}")
 
-        highest_similarity = 0.5
+        highest_similarity = 0  # 초기값은 0
         best_entry = None
 
         for entry in db_data:
+            # 유사도 계산
             similarity = self.similarity_calculator.calculate(input_text, entry["user_prompt"])
-            similar_logger.debug(f"'{input_text}'와(과) '{entry['user_prompt']}' 비교 중 - 유사도: {similarity:.6f}")
+            similar_logger.debug(f"'{input_text}'와(과) '{entry['user_prompt']}' 비교 중 - 조정된 유사도: {similarity:.6f}")
 
+            # 최고 유사도 갱신
             if similarity > highest_similarity:
                 highest_similarity = similarity
                 best_entry = entry
                 similar_logger.info(f"최고 유사도 갱신: {highest_similarity:.6f}, 항목: {best_entry}")
-                if similarity >= 1.0:
-                    similar_logger.info("최대 유사도를 발견하여 루프를 종료합니다.")
-                    break
 
+        # threshold를 그대로 비교 (조정값과는 무관)
         if best_entry and highest_similarity >= threshold:
             similar_logger.info(f"최고 유사도 {highest_similarity:.6f}로 가장 유사한 항목 발견: {best_entry}")
             return best_entry
