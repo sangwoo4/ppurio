@@ -24,3 +24,18 @@
   ```bash
     docker compose up --build
 
+<br>
+
+## frontend 실행 방법
+### window 및 mac 에서 실행 방법 (과정 동일)
+
+1. git clone https://github.com/sangwoo4/ppurio.git
+2. git fetch origin
+3. git checkout frontend
+4. npm install
+5. npm start
+<br/><br/>
+
+#### npm install 후 설치 오류가 생길 경우 의존성 무시 강제 설치
+
+- `npm install --legacy-peer-deps`: 편집기 라이브러리 toast-ui의 버전이 호환되지 않아 생기는 문제이므로 의존성 무시 강제설치를 해준다.

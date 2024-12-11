@@ -10,15 +10,14 @@ import API_BASE_URL from "../../URL_API";
 const Message = () => {
   const location = useLocation();
   const [message, setMessage] = useState("");
-  const [targets, setTargets] = useState([{ name: "", to: "" }]); // 여러 명 대상 관리
+  const [targets, setTargets] = useState([{ name: "", to: "" }]);
   const [userText, setUserText] = useState(null);
   const [category, setCategory] = useState(null);
-  const [imageSrc, setImageSrc] = useState(null); // 이미지 상태
-  const [text, setText] = useState(null); // 텍스트 상태
+  const [imageSrc, setImageSrc] = useState(null);
+  const [text, setText] = useState(null);
   const [userId, setUserId] = useState(null);
   const [fileUpload, setFileUpload] = useState(null);
 
-  // message 상태가 변경될 때마다 text 상태도 업데이트
   useEffect(() => {
     setText(message);
   }, [message]);
@@ -33,21 +32,20 @@ const Message = () => {
   useEffect(() => {
     if (location.state) {
       if (location.state.imageSrc) {
-        setImageSrc(location.state.imageSrc); // URL을 직접 설정
+        setImageSrc(location.state.imageSrc);
       }
-      // setImageSrc(location.state.imageSrc ? location.state.imageSrc.url : null);
       setText(location.state.text);
       setUserText(location.state.userText);
       setCategory(location.state.category);
 
       // 편집된 이미지도 전달받았다면 설정
       if (location.state.editImage) {
-        setImageSrc(location.state.editImage); // 편집된 이미지를 이미지 편집기에서 사용
+        setImageSrc(location.state.editImage);
       }
 
       // 전달받은 값들을 콘솔로 출력
       console.log("Received Image Source:", location.state.imageSrc);
-      console.log("Received Edited Image:", location.state.editImage); // 편집된 이미지 확인
+      console.log("Received Edited Image:", location.state.editImage);
       console.log("Received Text:", location.state.text);
       console.log("userText: ", location.state.userText, ", userCategory: ", location.state.category);
     }
@@ -95,7 +93,6 @@ const Message = () => {
 
     const targetCount = targets.length;
 
-    // 타겟 정보 구성
     const updatedTargets = targets.map((target) => ({
       to: target.to,
       name: target.name,
@@ -104,11 +101,11 @@ const Message = () => {
     const data = {
       account: "hansung06",
       messageType,
-      content: messageToSend, // 메시지 내용
+      content: messageToSend,
       targetCount,
       prompt: userText,
       category,
-      targets: updatedTargets, // 타겟 정보
+      targets: updatedTargets,
       userId,
     };
 
@@ -116,7 +113,7 @@ const Message = () => {
     if (imageSrc || fileUpload) {
       data.files = [
         {
-          fileUrl: imageSrc || fileUpload, // imageSrc는 URL, fileUpload는 Base64
+          fileUrl: imageSrc || fileUpload,
         },
       ];
     }
@@ -148,11 +145,9 @@ const Message = () => {
     }
   };
 
-\
   return (
     <div className="message-container">
       <div className="row-content">
-        {/* 메시지 작성 레이아웃 */}
         <div className="col-left bg-light p-4">
           <h2>메시지 작성</h2>
           <Form>
@@ -191,7 +186,6 @@ const Message = () => {
 
                       const reader = new FileReader();
 
-                      // 파일 읽기 완료 시 처리
                       reader.onload = () => {
                         const base64String = reader.result.split(",")[1]; // Base64 인코딩 부분만 추출
 
@@ -205,7 +199,6 @@ const Message = () => {
                 <span className="file-button">파일 선택</span>
               </label>
 
-
             </div>
             <Button
               variant="primary"
@@ -217,7 +210,6 @@ const Message = () => {
           </Form>
         </div>
 
-        {/* 받는 사람 정보 레이아웃 */}
         <div className="col-center bg-light p-4">
           <h2>받는 사람 정보</h2>
           {targets.map((target, index) => (
@@ -237,7 +229,6 @@ const Message = () => {
               />
             </div>
           ))}
-          {/* 추가 및 삭제 버튼을 한 번만 렌더링 */}
           <div className="button-group mt-2">
             <Button variant="success" onClick={addTarget} className="me-2">
               +
@@ -250,7 +241,6 @@ const Message = () => {
           </div>
         </div>
 
-        {/* 스마트폰 미리보기 레이아웃 */}
         <div className="col-right">
           <DeviceFrameset device="iPhone X" color="black">
             <div className="phone-content">

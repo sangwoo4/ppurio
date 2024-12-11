@@ -99,7 +99,6 @@ const Chatbot = () => {
           { text: "모든 입력이 완료되었습니다. 생성 중입니다...", isBot: true },
         ]);
         setCurrentStep(5); // 생성 완료 단계로 이동
-        // handleGenerateMessage(); // API 호출
       }
     }
   };
@@ -135,7 +134,6 @@ const Chatbot = () => {
     }
   };
 
-  // mood가 변경될 때마다 handleGenerateMessage 호출
   useEffect(() => {
     if (mood && mood.length > 0) {
       handleGenerateMessage();
@@ -151,8 +149,9 @@ const Chatbot = () => {
       { text: `선택한 어조: ${mood}`, isBot: false },
       { text: "모든 입력이 완료되었습니다. 생성 중입니다...", isBot: true },
     ]);
-    setCurrentStep(5); // 생성 단계로 이동
+    setCurrentStep(5);
   };
+
   useEffect(() => {
     if (currentStep === 4) {
       setMessages((prevMessages) => [
@@ -175,7 +174,7 @@ const Chatbot = () => {
         }
 
         const result = await response.json();
-        setCategories(result.data); // 응답의 'data' 필드를 상태로 설정
+        setCategories(result.data);
       } catch (err) {
         console.error("카테고리 요청 에러:", err);
       }
@@ -286,8 +285,8 @@ const Chatbot = () => {
       const newMessages = results.map((result) => {
         // 텍스트와 이미지를 각각 저장
         const message = {
-          text: result.data.text || '', // 텍스트가 없으면 빈 문자열을 사용
-          image: result.data.url || '', // 이미지 URL이 없으면 빈 문자열을 사용
+          text: result.data.text || '',
+          image: result.data.url || '',
           isBot: true,
         };
         console.log("메시지에 저장될 텍스트:", message.text);
@@ -306,7 +305,6 @@ const Chatbot = () => {
     }
   };
 
-
   const handleEdit = () => {
     if (resultImgData) {
       navigate('/edit/product', { state: { imageSrc: resultImgData, text: resultTxtData, userText: resultText, category: resultCategory } }); // EditProduct로 이미지 결과만 전달
@@ -314,7 +312,6 @@ const Chatbot = () => {
   };
 
   const handleSendMessageDirect = () => {
-
     if (resultImgData || resultTxtData) {
       navigate('/send/message', { state: { imageSrc: resultImgData, text: resultTxtData, userText: resultText, category: resultCategory } }); // 텍스트와 이미지 결과를 모두 전달
     }
@@ -464,7 +461,6 @@ const Chatbot = () => {
 
       <div className="result-container">
         <h2>결과 화면</h2>
-        {/* 텍스트와 이미지 상태가 업데이트될 때 각각 표시 */}
         {resultTxtData && (
           <div
             className="message-text"

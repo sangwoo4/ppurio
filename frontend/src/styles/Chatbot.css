@@ -8,7 +8,6 @@
   --trans-dur: 0.4s;
   --trans-timing: cubic-bezier(0.65, 0, 0.35, 1);
   font-size: 30px;
-  /* margin: auto; */
   padding: 1.5em;
   width: 100%;
   max-width: 10em;
@@ -49,13 +48,11 @@
   border-radius: 0.75em;
   display: flex;
   padding: 0.5em;
-  /*1.5em*/
   flex-direction: column;
   justify-content: center;
   width: 100%;
 }
 
-/*여기를 지우면 글자가 사라짐*/
 .step-form .steps__connector,
 .step-form .steps__step {
   position: relative;
@@ -64,8 +61,6 @@
 .step-form .steps__connector {
   background-color: hsl(var(--hue), 10%, 80%);
   margin-inline-start: 0.75em;
-  /* width: 0.075em;
-  height: 0.75em; */
   width: 0.1em;
   height: 2em;
   transform: translateX(-50%);
@@ -94,8 +89,6 @@
   color: hsl(var(--hue), 10%, 50%);
   font-size: 0.5em;
   line-height: 2;
-  /* font-size: 0.75em;
-  line-height: 2; */
   transition: color var(--trans-dur) var(--trans-timing), font-weight var(--trans-dur) var(--trans-timing);
 }
 
@@ -129,7 +122,6 @@
   transform: scale(1, 1);
 }
 
-/* Change layout depending on form width */
 @container form (min-width: 30em) {
   .step-form .btn {
     width: auto;
@@ -171,7 +163,6 @@
   }
 }
 
-/* Dark theme */
 @media (prefers-color-scheme: dark) {
   .step-form {
     --bg: hsl(var(--hue), 10%, 10%);
@@ -214,9 +205,6 @@
   }
 }
 
-
-
-
 .chatbot-page {
   display: flex;
   align-items: flex-start;
@@ -232,7 +220,6 @@
   max-height: 800px;
   border-right: 1px solid #ccc;
   padding: 1em;
-  /* height: 50%; */
   overflow-y: auto;
   margin-right: 20px;
 }
@@ -269,19 +256,6 @@
   margin-right: 0.5em;
 }
 
-/* .chat-mode-selection {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-} */
-
-/* .tone-selection {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-} */
-
-/* 모드 선택 버튼 스타일 */
 .chat-mode-selection button {
   padding: 10px 20px;
   margin: 10px;
@@ -289,20 +263,16 @@
   border: none;
   border-radius: 5px;
   background-color: #5c6bc0;
-  /* 기본 버튼 색상 */
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-/* 버튼 호버 효과 */
 .chat-mode-selection button:hover {
   background-color: #512da8;
-  /* 호버 시 색상 */
 }
 
 
-/* 버튼 컨테이너 중앙 정렬 */
 .chat-mode-selection {
   display: flex;
   justify-content: center;
@@ -361,20 +331,17 @@
   transition: background-color 0.3s ease;
 }
 
-/* 버튼 호버 효과 */
 .category-selection button,
 .re-selection button,
 .skip-button:hover {
   background-color: #512da8;
 }
 
-/* 버튼 컨테이너 중앙 정렬 */
 .category-selection,
 .re-selection,
 .skip-button {
   justify-content: center;
 }
-
 
 .result-container {
   flex: 1;

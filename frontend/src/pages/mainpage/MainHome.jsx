@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import "../../App.css";
 import "../../styles/MainHome.css";
 import mainColor from "../../assets/maincolor.png";
-import mainImage1 from "../../assets/mainImage1.png"; // 첫 번째 이미지 경로
-import mainImage2 from "../../assets/mainImage2.png"; // 두 번째 이미지 경로
+import mainImage1 from "../../assets/mainImage1.png";
+import mainImage2 from "../../assets/mainImage2.png";
 import { useUser } from "../../hooks/UserContext";
 
 const MainHome = () => {
   const navigate = useNavigate();
-  const [text, setText] = useState(""); // 출력되는 텍스트 상태
-  const [imageIndex, setImageIndex] = useState(0); // 현재 이미지 인덱스 상태
+  const [text, setText] = useState("");
+  const [imageIndex, setImageIndex] = useState(0);
   const { userId, setUserId } = useUser();
 
   // 유저 id 설정 불러오기
@@ -42,15 +42,13 @@ const MainHome = () => {
   ];
 
   // 이미지 배열
-  const images = [mainImage1, mainImage2]; // 이미지를 배열로 설정
+  const images = [mainImage1, mainImage2];
 
   const handleButtonClick = () => {
     if (!userId) {
-      // userId가 없으면 로그인 후 이용 가능하다는 알림을 먼저 띄우고 로그인 페이지로 이동
       alert("로그인 후 이용 가능합니다!");
       navigate("/login");
     } else {
-      // userId가 있으면 챗봇 페이지로 이동
       navigate("/chatbot");
     }
   };
@@ -66,19 +64,17 @@ const MainHome = () => {
       typingInterval = setInterval(() => {
         if (charIndex < fullTexts[textIndex].length) {
           setText((prev) => {
-            // 이전 텍스트와 새 문자를 합침, undefined 방지
             const updatedText = prev + (fullTexts[textIndex][charIndex] || "");
             return updatedText;
           });
           charIndex++;
         } else {
           clearInterval(typingInterval);
-          // 다음 텍스트로 넘어가기 전에 1분 대기
           setTimeout(() => {
             textIndex = (textIndex + 1) % fullTexts.length; // 순환하여 다음 텍스트 인덱스로 이동
-            charIndex = 0; // 다음 텍스트 타이핑 시작
-            setText(""); // 기존 텍스트 초기화
-            startTyping(); // 타이핑 시작
+            charIndex = 0;
+            setText("");
+            startTyping();
           }, 60000); // 1분(60초) 대기
         }
       }, 50); // 타이핑 속도 (50ms)
@@ -87,16 +83,16 @@ const MainHome = () => {
     startTyping(); // 초기 타이핑 시작
 
     return () => {
-      clearInterval(typingInterval); // 타이핑 중지
+      clearInterval(typingInterval);
     };
-  }, []); // 빈 배열을 넣어 컴포넌트 마운트 시 한 번만 실행
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setImageIndex((prevIndex) => (prevIndex + 1) % images.length); // 30초마다 이미지 변경
+      setImageIndex((prevIndex) => (prevIndex + 1) % images.length);
     }, 30000); // 30초마다 실행
 
-    return () => clearInterval(interval); // 컴포넌트 언마운트 시 interval 정리
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -110,7 +106,6 @@ const MainHome = () => {
       <div className="textPhrase">
         <h5>나만의 텍스트 1분 완성✨</h5>
       </div>
-      {/* 텍스트 박스 */}
       <div className="text-box">
         <p>{text}</p>
       </div>
@@ -118,10 +113,9 @@ const MainHome = () => {
       <div className="imagePhrase">
         <h5>원하는 이미지도 1분안에 완성✨</h5>
       </div>
-      {/* 이미지 삽입 공간 */}
       <div className="image-box">
         <img
-          src={images[imageIndex]} // 현재 이미지 인덱스에 해당하는 이미지 표시
+          src={images[imageIndex]}
           alt="Main Display"
           style={{ maxWidth: "100%", maxHeight: "100%", borderRadius: "8px" }}
         />
@@ -132,7 +126,6 @@ const MainHome = () => {
         <p>문자 전송까지 한 번에 해결🎯</p>
       </div>
 
-      {/* AI 생성 버튼 */}
       <button onClick={handleButtonClick} className="ai-button">AI 생성하러가기</button>
     </div>
   );
