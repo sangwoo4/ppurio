@@ -1,0 +1,273 @@
+@import url('https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Jua&family=Poor+Story&display=swap');
+
+
+.message-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: calc(100vh - 120px);
+  /* 헤더와 푸터 공간 제외 */
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: "Poor Story";
+  font-size: 17px;
+}
+
+.row-content {
+  display: flex;
+  flex-wrap: wrap;
+  /* 반응형: 줄바꿈 허용 */
+  justify-content: space-between;
+  align-items: flex-start;
+  /* 상단 정렬 */
+  gap: 20px;
+  /* 열 사이 간격 */
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.col-left,
+.col-right {
+  flex: 1 1 300px;
+  /* 반응형 크기 설정 */
+  max-width: 100%;
+  /* 최대 너비 제한 */
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.col-left {
+  margin-right: 20px;
+}
+
+.col-right {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.phone-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.phone-header {
+  background-color: #8BFBC2;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-size: 0.9rem;
+  font-family: "Roboto", sans-serif;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.phone-image-preview {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f4f8;
+  border-radius: 10px;
+  margin: 10px 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.phone-image-preview img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.default-preview,
+.default-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-family: "Roboto", sans-serif;
+}
+
+.default-preview p,
+.default-message p {
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
+.phone-message-preview {
+  flex: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 1rem;
+  font-family: "Open Sans", sans-serif;
+  color: #333;
+  white-space: pre-wrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin: 10px 0;
+  overflow-y: auto;
+}
+
+.message-input {
+  resize: none;
+  /* 크기 조정 비활성화 */
+  overflow-y: auto;
+  /* 내부 스크롤 가능 */
+  height: 300px;
+  /* 고정 높이 */
+  width: 100%;
+  /* 너비를 입력란에 맞게 조정 */
+  padding: 10px;
+  font-size: 1rem;
+  font-family: "Roboto", sans-serif;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.message-input:focus {
+  border-color: #007bff;
+  /* 포커스 시 테두리 색상 */
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+  /* 포커스 그림자 */
+}
+
+.phone-header {
+  background-color: #8BFBC2;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-size: 0.9rem;
+  font-family: "Roboto", sans-serif;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  /* 위치 조정 */
+}
+
+.header-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.message-type {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background-color: #904668;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  font-family: "Roboto", sans-serif;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 반응형 스타일 */
+@media (max-width: 1024px) {
+  .row-content {
+    flex-direction: column;
+    /* 세로 배치 */
+    align-items: center;
+  }
+
+  .col-left,
+  .col-right {
+    max-width: 100%;
+    /* 부모 크기 100%로 확장 */
+  }
+}
+
+@media (max-width: 768px) {
+
+  .col-left,
+  .col-right {
+    flex: 1 1 auto;
+    /* 요소들이 동일 비율로 늘어나도록 설정 */
+    margin-bottom: 20px;
+    /* 아래 간격 추가 */
+  }
+}
+
+.drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border: 2px dashed #007acc;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #f0f8ff;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.drop-zone:hover {
+  background-color: #e6f3ff;
+  border-color: #005f99;
+}
+
+.file-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+}
+
+.file-label p {
+  margin: 10px 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.file-label input {
+  display: none;
+  /* 숨김 */
+}
+
+.file-button {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 15px;
+  background-color: #007acc;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  cursor: pointer;
+}
+
+.file-button:hover {
+  background-color: #005f99;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}

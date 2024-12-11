@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Poor+Story&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Jua&family=Poor+Story&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gaegu&family=Gamja+Flower&family=Jua&family=Poor+Story&display=swap');
+
+* {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* min-height: 100%; 넣으면 로그인 css 조짐*/
+}
+
+.mainframe img {
+  position: relative;
+  left: -5%;
+  width: 85%;
+  height: auto;
+  object-fit: contain;
+  top: 40px;
+}
+
+.mainhome-container {
+  position: relative;
+  /* 자식 요소들을 절대 위치로 배치 가능하게 설정 */
+  width: 100%;
+  height: 103vh;
+  background-color: #f5f7fa;
+  overflow: hidden;
+}
+
+
+.textPhrase {
+  position: absolute;
+  top: 210px;
+  left: 140px;
+  font-family: "Gamja Flower";
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* 텍스트 박스 */
+.text-box {
+  position: absolute;
+  top: 330px;
+  left: 370px;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  width: 550px;
+  font-family: "Poor Story";
+  font-size: 17px;
+
+  /* 박스 크기 */
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  white-space: pre-wrap;
+  line-height: 1.5;
+  color: #333;
+  z-index: 2;
+  /* 이미지 위에 표시되도록 설정 */
+}
+
+.imagePhrase {
+  position: absolute;
+  top: 550px;
+  left: 900px;
+  font-family: "Gamja Flower";
+}
+
+/* 이미지 박스 */
+.image-box {
+  position: absolute;
+  top: 650px;
+  left: 500px;
+  height: 380px;
+  background-color: #e9ecef;
+  border: 1px dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  z-index: 1;
+  animation: slightMove 2s ease-in-out infinite;
+  /* 애니메이션 속도 변경 */
+}
+
+/* 미세하게 위아래로 움직이는 애니메이션 */
+@keyframes slightMove {
+  0% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) translateY(-10px);
+    /* 위로 10px 이동 */
+  }
+
+  100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+}
+
+
+.text-frame {
+  position: absolute;
+  top: 100px;
+  right: 50px;
+  padding: 15px 25px;
+  color: rgb(94, 118, 224);
+  font-size: 25px;
+  font-weight: 600;
+  font-family: "Gamja Flower";
+}
+
+
+
+/* AI 버튼 */
+.ai-button {
+  position: absolute;
+  bottom: 200px;
+  right: 50px;
+  padding: 15px 25px;
+  background-color: #7cacd6;
+  color: white;
+  font-size: 25px;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+  transform: scale(1);
+}
+
+.ai-button:hover {
+  background-color: #357ab7;
+  transform: scale(1.05);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.ai-button:active {
+  background-color: #3c87bd;
+  transform: scale(1);
+}
+
+.ai-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(72, 126, 207, 0.5);
+}
