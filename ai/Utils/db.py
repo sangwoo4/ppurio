@@ -115,10 +115,10 @@ class MessageImageService:
             if not category_id:
                 self.logger.warning(f"유효하지 않은 카테고리: {category}")
                 return []
-            query += " WHERE m.category_id = %s LIMIT 10"
+            query += " WHERE m.category_id = %s"
             params = (category_id,)
         else:
-            query += " WHERE m.category_id IS NULL LIMIT 10"
+            query += " WHERE m.category_id IS NULL"
 
         results = await self.data_service.fetch_data(query, params)
         self.logger.info(f"조회된 메시지 및 이미지 데이터 수: {len(results)}")
