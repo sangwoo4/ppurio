@@ -294,15 +294,6 @@ const Chatbot = () => {
         return message;
       });
 
-
-
-      // const newMessages = results.map((result) => ({
-      //   text: result.data.text || "",
-      //   image: result.data.url || "",
-      //   isBot: true,
-      // }
-      // ));
-
       setMessages((prev) => [...prev, ...newMessages]);
 
       setCurrentStep(steps); // 최종 단계 이동

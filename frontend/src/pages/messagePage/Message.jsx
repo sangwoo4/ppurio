@@ -136,9 +136,15 @@ const Message = () => {
       console.log("Response Data:", result);
 
       if (response.ok && result.success) {
-        alert("메시지 전송에 성공했습니다!");
-        window.location.reload();
-      } else {
+        const userConfirmed = window.confirm("메시지 전송에 성공했습니다! 홈화면으로 이동합니다.");
+
+        if (userConfirmed) {
+          window.location.href = "/"; // 확인을 누르면 홈 화면으로 이동
+        } else {
+          console.log("사용자가 취소를 선택했습니다.");
+        }
+      }
+      else {
         alert(result.message || "메시지 전송에 실패했습니다.");
       }
     } catch (error) {
