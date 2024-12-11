@@ -46,6 +46,7 @@ npm install 후 설치 오류가 발생하는 경우 의존성 무시 강제 설
 ## 프로젝트 구조
 
 ### ai 폴더
+```
 ppurio/
 |── ai/
 |    |── Image/
@@ -61,7 +62,7 @@ ppurio/
 |         |── schemas.py
 |         |── similar.py
 |── README.md
-
+```
 common_service.py
 
 	•	역할: 공통 서비스 로직과 로깅 기능을 제공합니다.
@@ -107,7 +108,7 @@ main.py
 	•	uvicorn을 통해 FastAPI 서버 실행.
 
  ### backend 폴더
- .
+ ```
 ├── Dockerfile
 ├── HELP.md
 ├── gradlew
@@ -123,6 +124,7 @@ main.py
                     ├── Util
                     ├── category
                     └── model
+```
 Account
 
 	•	계정 관련 요청을 처리하는 로직을 포함한 디렉토리.
@@ -159,6 +161,8 @@ PpurioApplication.java
 
 
  ### frontend 폴더
+
+ ```
  src/
 |── assets/
 |    |── fonts/
@@ -185,6 +189,7 @@ PpurioApplication.java
 |── index.js
 |── package.json
 |── README.md
+```
 
 	•	assets: 이미지 모음
 	•	components: 헤더 푸터 영역 표시
